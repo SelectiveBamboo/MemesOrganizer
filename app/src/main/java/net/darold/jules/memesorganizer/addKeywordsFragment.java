@@ -1,5 +1,6 @@
 package net.darold.jules.memesorganizer;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -12,21 +13,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.Toast;
+
+import net.darold.jules.memesorganizer.StringArrayTools;
 
 import me.gujun.android.taggroup.TagGroup;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link addKeywordsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment to add keywords to the currently viewed pic in picture_browser
  */
 public class addKeywordsFragment extends Fragment {
 
@@ -34,6 +27,8 @@ public class addKeywordsFragment extends Fragment {
     private static final String ARG_PARAM_PATH = "picturePath";
     private static final String ARG_PARAM_URI = "imageURI";
     private static final String ARG_PARAM_NAME = "pictureName";
+
+    private StringArrayTools sarrTools = new StringArrayTools();
 
     private String picturePath;
     private String imageURI;
@@ -45,11 +40,11 @@ public class addKeywordsFragment extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     *
-     * @return A new instance of fragment addKeywordsFragment.
+     * To create new instance of this fragment (so no need of fragment manager?)
+     * @param picturePath
+     * @param imageURI
+     * @param pictureName
+     * @return
      */
     public static addKeywordsFragment newInstance(String picturePath, String imageURI, String pictureName) {
         addKeywordsFragment fragment = new addKeywordsFragment();
@@ -82,49 +77,99 @@ public class addKeywordsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.add_keywords_fragment_Layout);
+        //First tagGroup, to display the keywords that WILL be associated to the image
+        TagGroup applying_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_applying);
+        //Second tagGroup, to display the keywords that COULD be associated to the image
+        TagGroup list_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_list);
 
-        TagGroup mTagGroup = (TagGroup) view.findViewById(R.id.tag_group);
-        mTagGroup.setTags(new String[]{"Tag1", "Tag2", "Tag3"});
+        //Fine customisations of first group
+        applying_TagGroup.setTags(new String[]{"Toug"});
+        applying_TagGroup.setOnTagChangeListener(new TagGroup.OnTagChangeListener() {
+            @Override
+            public void onAppend(TagGroup tagGroup, String tag) {
+                /**
+                 * Things to do when a new tag is created (append)
+                 * ---Add to database if needed
+                 * ---Remove from the other group if existing
+                 */
 
-        int nbKeywords = 15;
-        for(int i = 0; i < nbKeywords; i++)
-        {
+                //TODO --- Add to database
+                String newTagsList[] = sarrTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
+                list_TagGroup.setTags(newTagsList);
+            }
 
-            // create a new Button
-            Button btn = new Button(getContext());
+            @Override
+            public void onDelete(TagGroup tagGroup, String tag) {
+                /**
+                 * Things to do when tag's deleted in the group
+                 *
+                 *---- Add it to the other group
+                 */
 
-            // set button text
-            btn.setText("Button " + i);
-
-
-            // set gravity for text within button
-           // btn.setGravity(Gravity.TOP);
-
-            // set button background
-            btn.setBackgroundColor(Color.DKGRAY);
-
-            // set an OnClickListener for the button
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getContext(), "Hola from clicked button", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            // declare and initialize LayoutParams for the layout
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-
-// decide upon the positioning of the button //
-// you will likely need to use the screen size to position the
-// button anywhere other than the four corners
-            params.setMargins(80, 80, 80, 0);
+                String newTagsList[] = sarrTools.addStringToStrArray(list_TagGroup.getTags(), tag);
+                list_TagGroup.setTags(newTagsList);
+            }
+        });
 
 
-// add the view
-            layout.addView(btn, params);
+        //Fine customisations of second group
+        list_TagGroup.setTags(new String[]{"Tag1", "Tag2", "Tag3"});
+        list_TagGroup.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+            @Override
+            public void onTagClick(String tag) {
+                /**
+                 * Things to do when this a tag is clicked
+                 * ---Add to other group
+                 * ---remove from this group
+                 */
 
-            Log.e("DISPLAYING NAME", "Button " + i);
-        }
+                String newTagsApplying[] = sarrTools.addStringToStrArray(applying_TagGroup.getTags(), tag);
+                applying_TagGroup.setTags(newTagsApplying);
+
+                String newTagsList[] = sarrTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
+                list_TagGroup.setTags(newTagsList);
+            }
+        });
+
+
+//        int nbKeywords = 15;
+//        for(int i = 0; i < nbKeywords; i++)
+//        {
+//
+//            // create a new Button
+//            Button btn = new Button(getContext());
+//
+//            // set button text
+//            btn.setText("Button " + i);
+//
+//
+//            // set gravity for text within button
+//           // btn.setGravity(Gravity.TOP);
+//
+//            // set button background
+//            btn.setBackgroundColor(Color.DKGRAY);
+//
+//            // set an OnClickListener for the button
+//            btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(getContext(), "Hola from clicked button", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//
+//            // declare and initialize LayoutParams for the layout
+//            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+//
+//// decide upon the positioning of the button //
+//// you will likely need to use the screen size to position the
+//// button anywhere other than the four corners
+//            params.setMargins(80, 80, 80, 0);
+//
+//
+//// add the view
+//            layout.addView(btn, params);
+//
+//            Log.e("DISPLAYING NAME", "Button " + i);
+//        }
     }
 }
