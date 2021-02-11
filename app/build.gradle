@@ -5,6 +5,7 @@ plugins {
 android {
     compileSdkVersion 29
     buildToolsVersion "30.0.3"
+    dataBinding.enabled = true
 
     defaultConfig {
         applicationId "net.darold.jules.memesorganizer"
@@ -30,8 +31,10 @@ android {
 
 dependencies {
     def fragment_version = "1.2.5"
+    def room_version = "2.2.6"
 
-
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'me.gujun.android.taggroup:library:1.4@aar'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
