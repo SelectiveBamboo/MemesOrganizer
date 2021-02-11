@@ -17,17 +17,23 @@ public class StringArrayTools {
         toReturn.addAll(Arrays.asList(strArray));
         toReturn.remove(strToremove);
 
-        return (String[]) toReturn.toArray();
+        return  Arrays.copyOf(toReturn.toArray(), toReturn.toArray().length, String[].class);
     }
 
 
+    /**
+     * Add strToAdd in strArray and return the corresponding String Array
+     * @param strArray
+     * @param strToAdd
+     * @return
+     */
     public String[] addStringToStrArray(String[] strArray, String strToAdd)
     {
         ArrayList<String> toReturn = new ArrayList<String>();
         toReturn.addAll(Arrays.asList(strArray));
         toReturn.add(strToAdd);
 
-        return (String[]) toReturn.toArray();
+        return Arrays.copyOf(toReturn.toArray(), toReturn.toArray().length, String[].class);
     }
 
 
