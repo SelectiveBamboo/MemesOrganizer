@@ -28,8 +28,6 @@ public class addKeywordsFragment extends Fragment {
     private static final String ARG_PARAM_URI = "imageURI";
     private static final String ARG_PARAM_NAME = "pictureName";
 
-    private StringArrayTools sarrTools = new StringArrayTools();
-
     private String picturePath;
     private String imageURI;
     private String pictureName;
@@ -94,7 +92,7 @@ public class addKeywordsFragment extends Fragment {
                  */
 
                 //TODO --- Add to database
-                String newTagsList[] = sarrTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
+                String[] newTagsList = StringArrayTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
                 list_TagGroup.setTags(newTagsList);
             }
 
@@ -106,7 +104,7 @@ public class addKeywordsFragment extends Fragment {
                  *---- Add it to the other group
                  */
 
-                String newTagsList[] = sarrTools.addStringToStrArray(list_TagGroup.getTags(), tag);
+                String[] newTagsList = StringArrayTools.addStringToStrArray(list_TagGroup.getTags(), tag);
                 list_TagGroup.setTags(newTagsList);
             }
         });
@@ -123,10 +121,10 @@ public class addKeywordsFragment extends Fragment {
                  * ---remove from this group
                  */
 
-                String newTagsApplying[] = sarrTools.addStringToStrArray(applying_TagGroup.getTags(), tag);
+                String[] newTagsApplying = StringArrayTools.addStringToStrArray(applying_TagGroup.getTags(), tag);
                 applying_TagGroup.setTags(newTagsApplying);
 
-                String newTagsList[] = sarrTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
+                String[] newTagsList = StringArrayTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
                 list_TagGroup.setTags(newTagsList);
             }
         });

@@ -11,7 +11,7 @@ public class StringArrayTools {
      * @param strToremove
      * @return
      */
-    public String[] removeStringFromStrArray(String[] strArray, String strToremove)
+    public static String[] removeStringFromStrArray(String[] strArray, String strToremove)
     {
         ArrayList<String> toReturn = new ArrayList<String>();
         toReturn.addAll(Arrays.asList(strArray));
@@ -27,7 +27,7 @@ public class StringArrayTools {
      * @param strToAdd
      * @return
      */
-    public String[] addStringToStrArray(String[] strArray, String strToAdd)
+    public static String[] addStringToStrArray(String[] strArray, String strToAdd)
     {
         ArrayList<String> toReturn = new ArrayList<String>();
         toReturn.addAll(Arrays.asList(strArray));
