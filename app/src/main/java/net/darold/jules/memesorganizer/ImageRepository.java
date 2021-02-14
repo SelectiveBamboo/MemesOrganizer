@@ -14,6 +14,7 @@ public class ImageRepository {
 
     private LiveData<List<Image>> mAllImages;
     private LiveData<List<Keyword>> mAllKeyword;
+    private KeywordsImagesCrossRefDAO mKeyImaCrossRefDAO;
 
 
     ImageRepository(Application application) {
@@ -21,6 +22,7 @@ public class ImageRepository {
 
         mImageDAO = db.imageDAO();
         mKeywordDAO = db.keywordDAO();
+        mKeyImaCrossRefDAO = db.keywordsImagesCrossRefDAO();
 
         mAllImages = mImageDAO.getAllImages();
         mAllKeyword = mKeywordDAO.getAllKeywords();
@@ -33,6 +35,14 @@ public class ImageRepository {
 
     LiveData<List<Keyword>> getAllKeywords(){
         return mAllKeyword;
+    }
+
+    LiveData<List<KeywordsImagesCrossRefDAO.ImageWithKeywords>> getImageWithKeywords(){
+        return mKeyImaCrossRefDAO.getImageWithKeywords();
+    }
+
+    LiveData<List<KeywordsImagesCrossRefDAO.KeywordWithImages>> getKeywordWithImages(){
+        return mKeyImaCrossRefDAO.getKeywordWithImages();
     }
 
     List<Image> getAllImagesByName(String name){

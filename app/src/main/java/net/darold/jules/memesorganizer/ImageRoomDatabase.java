@@ -10,11 +10,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {Image.class, Keyword.class, ImageFTS.class}, version = 1, exportSchema = false)
+@Database(entities = {Image.class, Keyword.class, ImageFTS.class, KeywordsImagesCrossRef.class}, version = 1, exportSchema = false)
 public abstract class ImageRoomDatabase extends RoomDatabase {
 
     public abstract ImageDAO imageDAO();
     public abstract KeywordDAO keywordDAO();
+    public abstract KeywordsImagesCrossRefDAO keywordsImagesCrossRefDAO();
 
 
     private static volatile ImageRoomDatabase INSTANCE;
