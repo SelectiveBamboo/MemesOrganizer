@@ -13,7 +13,10 @@ import java.util.concurrent.Executors;
 @Database(entities = {Image.class, Keyword.class, KeywordsImagesCrossRef.class}, version = 1, exportSchema = false)
 public abstract class ImageRoomDatabase extends RoomDatabase {
 
-    public abstract imageDAO imageDAO();
+    public abstract ImageDAO imageDAO();
+    public abstract KeywordDAO keywordDAO();
+    public abstract keywordsImagesCrossRefDAO keywordsImagesCrossRefDAO();
+
 
     private static volatile ImageRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -25,7 +28,7 @@ public abstract class ImageRoomDatabase extends RoomDatabase {
             synchronized (ImageRoomDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            ImageRoomDatabase.class, "word_database")
+                            ImageRoomDatabase.class, "image_keywords_database")
                             .build();
                 }
             }

@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey;
 public class Image {
 
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    private long imageId;
 
     @ColumnInfo(name = "imageURI")
     private String imageURI;
@@ -38,6 +38,9 @@ public class Image {
         this.imageURI = imageURI;
     }
 
+    public void setImageId(long imageId){this.imageId = imageId;}
+
+    public long getImageId(){return imageId;}
     public String getImageURI(){return this.imageURI;}
     public String getImageName(){return this.imageName;}
     public String getImagePath(){return this.imagePath;}

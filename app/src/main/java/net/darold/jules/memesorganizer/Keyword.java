@@ -1,5 +1,6 @@
 package net.darold.jules.memesorganizer;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,6 +9,7 @@ import androidx.room.PrimaryKey;
 public class Keyword {
 
     @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "keyword")
     private String keyword;
 

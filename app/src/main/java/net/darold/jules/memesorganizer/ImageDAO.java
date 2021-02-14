@@ -10,7 +10,7 @@ import androidx.room.Query;
 import java.util.List;
 
 @Dao
-public interface imageDAO {
+public interface ImageDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertImages(Image... images);
@@ -19,10 +19,10 @@ public interface imageDAO {
     void deleteImage(Image image);
 
     @Query("SELECT * FROM images_table")
-    List<Image> getAllImages();
+    LiveData<List<Image>> getAllImages();
 
     @Query("SELECT * FROM images_table WHERE imageName LIKE :alikeName ORDER BY imageName ASC")
-    LiveData<List<Image>> searchAllImagesByName(String alikeName);
+    List<Image> searchAllImagesByName(String alikeName);
 
 
 

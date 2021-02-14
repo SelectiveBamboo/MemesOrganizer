@@ -1,6 +1,7 @@
 package net.darold.jules.memesorganizer;
 
 import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
 import androidx.room.Embedded;
 import androidx.room.Junction;
 import androidx.room.Query;
@@ -9,6 +10,7 @@ import androidx.room.Transaction;
 
 import java.util.List;
 
+@Dao
 public interface keywordsImagesCrossRefDAO {
 
     class ImageWithKeywords {
@@ -38,7 +40,6 @@ public interface keywordsImagesCrossRefDAO {
 
     @Transaction
     @Query("SELECT * FROM keywords_table")
-     LiveData<List<KeywordWithImages>> getKeywordWithImages();
-
+    LiveData<List<KeywordWithImages>> getKeywordWithImages();
 
 }
