@@ -11,7 +11,6 @@ public class ImageRepository {
 
     private ImageDAO mImageDAO;
     private KeywordDAO mKeywordDAO;
-    private keywordsImagesCrossRefDAO mKeyImaCrossRefDAO;
 
     private LiveData<List<Image>> mAllImages;
     private LiveData<List<Keyword>> mAllKeyword;
@@ -22,7 +21,6 @@ public class ImageRepository {
 
         mImageDAO = db.imageDAO();
         mKeywordDAO = db.keywordDAO();
-        mKeyImaCrossRefDAO = db.keywordsImagesCrossRefDAO();
 
         mAllImages = mImageDAO.getAllImages();
         mAllKeyword = mKeywordDAO.getAllKeywords();
@@ -37,20 +35,16 @@ public class ImageRepository {
         return mAllKeyword;
     }
 
-    LiveData<List<keywordsImagesCrossRefDAO.ImageWithKeywords>> getImageWithKeywords(){
-        return mKeyImaCrossRefDAO.getImageWithKeywords();
-    }
-
-    LiveData<List<keywordsImagesCrossRefDAO.KeywordWithImages>> getKeywordWithImages(){
-        return mKeyImaCrossRefDAO.getKeywordWithImages();
-    }
-
     List<Image> getAllImagesByName(String name){
        /* ImageRoomDatabase.databaseWriteExecutor.execute(() -> {
             mImageDAO.searchAllImagesByName(name);
         });*/
         return mImageDAO.searchAllImagesByName(name);
     }
+
+    Image getImageByURI(String URI){return mImageDAO.searchImageByURI(URI);}
+
+    List<Image> getAllImagesWithKeywords(String matchQuery){return mImageDAO.searchAllImagesWithKeywords(matchQuery);}
 
     List<Keyword> getAlikeKeywords(String keyword){
         /*ImageRoomDatabase.databaseWriteExecutor.execute(() -> {

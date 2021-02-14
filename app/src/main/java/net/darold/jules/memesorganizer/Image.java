@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey;
 /**
  * Image class for android room to handle database.
  * An image has an id (unique, autogenerate), a URI (unique), a path (unique), and a name
- *Even though URI and path are unique, an Id is useed as primary key in anticipation
+ *Even though URI and path are unique, an Id is used as primary key in anticipation
  * of further evolutions not depending on path or URi
  */
 
@@ -20,6 +20,7 @@ import androidx.room.PrimaryKey;
 public class Image {
 
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "imageId")
     private long imageId;
 
     @ColumnInfo(name = "imageURI")
@@ -31,19 +32,25 @@ public class Image {
     @ColumnInfo(name = "imagePath")
     private String imagePath;
 
-    public Image(@NonNull String imageURI, String imageName, String imagePath)
-    {
+    @ColumnInfo(name = "imageKeywords")
+    private String imageKeywords;
+
+
+    public Image(@NonNull String imageURI, String imageName, String imagePath, String imageKeywords) {
+        this.imageURI = imageURI;
         this.imageName = imageName;
         this.imagePath = imagePath;
-        this.imageURI = imageURI;
+        this.imageKeywords = imageKeywords;
     }
 
     public void setImageId(long imageId){this.imageId = imageId;}
+
 
     public long getImageId(){return imageId;}
     public String getImageURI(){return this.imageURI;}
     public String getImageName(){return this.imageName;}
     public String getImagePath(){return this.imagePath;}
+    public String getImageKeywords(){return imageKeywords;}
 }
 
 
