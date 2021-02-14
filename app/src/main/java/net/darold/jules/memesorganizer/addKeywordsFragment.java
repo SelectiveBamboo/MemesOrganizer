@@ -1,20 +1,15 @@
 package net.darold.jules.memesorganizer;
 
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import net.darold.jules.memesorganizer.StringArrayTools;
 
 import me.gujun.android.taggroup.TagGroup;
 
@@ -27,6 +22,8 @@ public class addKeywordsFragment extends Fragment {
     private static final String ARG_PARAM_PATH = "picturePath";
     private static final String ARG_PARAM_URI = "imageURI";
     private static final String ARG_PARAM_NAME = "pictureName";
+
+    private ImageViewModel imgViewModel;
 
     private String picturePath;
     private String imageURI;
@@ -74,6 +71,8 @@ public class addKeywordsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        imgViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
         //First tagGroup, to display the keywords that WILL be associated to the image
         TagGroup applying_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_applying);
