@@ -1,4 +1,4 @@
-package net.darold.jules.memesorganizer;
+    package net.darold.jules.memesorganizer;
 
 import android.app.Application;
 
@@ -10,8 +10,8 @@ import java.util.List;
 public class ImageViewModel extends AndroidViewModel {
 
     private  ImageRepository mImgRepo;
-    private final LiveData<List<Image>> mAllImages;
-    private final LiveData<List<Keyword>> mAllKeyword;
+    private final List<Image> mAllImages;
+    private final List<Keyword> mAllKeyword;
 
     public ImageViewModel (Application application)
     {
@@ -23,11 +23,11 @@ public class ImageViewModel extends AndroidViewModel {
     }
 
 
-    LiveData<List<Image>> getAllImages(){
+    List<Image> getAllImages(){
         return mAllImages;
     }
 
-    LiveData<List<Keyword>> getAllKeywords(){
+    List<Keyword> getAllKeywords(){
         return mAllKeyword;
     }
 
@@ -38,6 +38,8 @@ public class ImageViewModel extends AndroidViewModel {
     Image getImageByURI(String URI){return mImgRepo.getImageByURI(URI);}
 
     List<Image> getAllImagesWithKeywords(String matchQuery){return mImgRepo.getAllImagesWithKeywords(matchQuery);}
+
+    KeywordsImagesCrossRef.ImageWithKeywords getImageWithKeywordsById(long imageId){return mImgRepo.getImageWithKeywordsById(imageId);}
 
     List<Keyword> getAlikeKeywords(String keyword){
         return mImgRepo.getAlikeKeywords(keyword);

@@ -20,7 +20,7 @@ public interface ImageDAO {
     void deleteImage(Image image);
 
     @Query("SELECT * FROM images_table")
-    LiveData<List<Image>> getAllImages();
+    List<Image> getAllImages();
 
     @Query("SELECT * FROM images_table WHERE imageURI = :URI LIMIT 1")
     Image searchImageByURI(String URI);

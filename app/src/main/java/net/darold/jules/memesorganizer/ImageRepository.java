@@ -1,8 +1,10 @@
 package net.darold.jules.memesorganizer;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.lifecycle.LiveData;
+import androidx.room.Room;
 
 import java.security.Key;
 import java.util.List;
@@ -12,13 +14,16 @@ public class ImageRepository {
     private ImageDAO mImageDAO;
     private KeywordDAO mKeywordDAO;
 
-    private LiveData<List<Image>> mAllImages;
-    private LiveData<List<Keyword>> mAllKeyword;
+    private List<Image> mAllImages;
+    private List<Keyword> mAllKeyword;
     private KeywordsImagesCrossRefDAO mKeyImaCrossRefDAO;
 
 
-    ImageRepository(Application application) {
-        ImageRoomDatabase db = ImageRoomDatabase.getDatabase(application);
+    ImageRepository(Context context) {
+        //ImageRoomDatabase db = ImageRoomDatabase.getDatabase(application);
+        ImageRoomDatabase db = Room.databaseBuilder(context, ImageRoomDatabase.class, "image_database")
+                                .allowMainThreadQueries()
+                                .build();
 
         mImageDAO = db.imageDAO();
         mKeywordDAO = db.keywordDAO();
@@ -29,26 +34,31 @@ public class ImageRepository {
     }
 
 
-    LiveData<List<Image>> getAllImages(){
+    List<Image> getAllImages(){
         return mAllImages;
     }
 
-    LiveData<List<Keyword>> getAllKeywords(){
+    List<Keyword> getAllKeywords(){
         return mAllKeyword;
     }
 
-    LiveData<List<KeywordsImagesCrossRefDAO.ImageWithKeywords>> getImageWithKeywords(){
+    List<KeywordsImagesCrossRef.ImageWithKeywords> getImageWithKeywords(){
         return mKeyImaCrossRefDAO.getImageWithKeywords();
     }
 
-    LiveData<List<KeywordsImagesCrossRefDAO.KeywordWithImages>> getKeywordWithImages(){
+    List<KeywordsImagesCrossRef.KeywordWithImages> getKeywordWithImages(){
         return mKeyImaCrossRefDAO.getKeywordWithImages();
+    }
+
+    KeywordsImagesCrossRef.ImageWithKeywords getImageWithKeywordsById(long imageId){
+        return mKeyImaCrossRefDAO.getImageWithKeywordsById(imageId);
     }
 
     List<Image> getAllImagesByName(String name){
        /* ImageRoomDatabase.databaseWriteExecutor.execute(() -> {
             mImageDAO.searchAllImagesByName(name);
         });*/
+
         return mImageDAO.searchAllImagesByName(name);
     }
 

@@ -1,9 +1,40 @@
 package net.darold.jules.memesorganizer;
 
+import androidx.annotation.NonNull;
+import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.Junction;
+import androidx.room.Relation;
 
-@Entity(primaryKeys = {"keyword", "imageId"})
+import java.util.List;
+
+@Entity(tableName="images_keywords_join",
+        primaryKeys = {"keyword", "imageId"})
 public class KeywordsImagesCrossRef {
-    public long keyword;
+    @NonNull
+    public String keyword;
+    @NonNull
     public long imageId;
+
+    static class ImageWithKeywords {
+        @Embedded
+        public Image image;
+        @Relation(
+                parentColumn = "imageId",
+                entityColumn = "keyword",
+                associateBy = @Junction(KeywordsImagesCrossRef.class)
+        )
+        public List<Keyword> keywords;
+    }
+
+    static class KeywordWithImages {
+        @Embedded public Keyword keyword;
+        @Relation(
+                parentColumn = "keyword",
+                entityColumn = "imageId",
+                associateBy = @Junction(KeywordsImagesCrossRef.class)
+        )
+        public List<Image> images;
+    }
 }

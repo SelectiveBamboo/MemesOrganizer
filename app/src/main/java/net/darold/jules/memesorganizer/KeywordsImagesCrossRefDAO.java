@@ -13,33 +13,16 @@ import java.util.List;
 @Dao
 public interface KeywordsImagesCrossRefDAO {
 
-    class ImageWithKeywords {
-        @Embedded
-        public Image image;
-        @Relation(
-                parentColumn = "imageId",
-                entityColumn = "keyword",
-                associateBy = @Junction(KeywordsImagesCrossRef.class)
-        )
-        public List<Keyword> keywords;
-    }
-
-    class KeywordWithImages {
-        @Embedded public Keyword keyword;
-        @Relation(
-                parentColumn = "keyword",
-                entityColumn = "imageId",
-                associateBy = @Junction(KeywordsImagesCrossRef.class)
-        )
-        public List<Image> images;
-    }
-
     @Transaction
     @Query("SELECT * FROM images_table")
-    LiveData<List<ImageWithKeywords>> getImageWithKeywords();
+    List<KeywordsImagesCrossRef.ImageWithKeywords> getImageWithKeywords();
+
+    @Transaction
+    @Query("SELECT * FROM images_table WHERE imageId = :imageId LIMIT 1")
+    KeywordsImagesCrossRef.ImageWithKeywords getImageWithKeywordsById(long imageId);
 
     @Transaction
     @Query("SELECT * FROM keywords_table")
-    LiveData<List<KeywordWithImages>> getKeywordWithImages();
+    List<KeywordsImagesCrossRef.KeywordWithImages> getKeywordWithImages();
 
 }

@@ -19,7 +19,7 @@ public interface KeywordDAO {
     void deleteKeyword(Keyword keyword);
 
     @Query("SELECT * FROM keywords_table ORDER BY keyword ASC")
-    LiveData<List<Keyword>> getAllKeywords();
+    List<Keyword> getAllKeywords();
 
     @Query("SELECT * FROM keywords_table WHERE keyword LIKE :alikeKeyword ORDER BY keyword ASC")
     List<Keyword> searchAlikeKeywords(String alikeKeyword);
