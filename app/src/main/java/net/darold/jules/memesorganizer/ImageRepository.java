@@ -1,12 +1,9 @@
 package net.darold.jules.memesorganizer;
 
-import android.app.Application;
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 
-import java.security.Key;
 import java.util.List;
 
 public class ImageRepository {
@@ -43,11 +40,11 @@ public class ImageRepository {
     }
 
     List<KeywordsImagesCrossRef.ImageWithKeywords> getImageWithKeywords(){
-        return mKeyImaCrossRefDAO.getImageWithKeywords();
+        return mKeyImaCrossRefDAO.getAllImagesWithKeywords();
     }
 
     List<KeywordsImagesCrossRef.KeywordWithImages> getKeywordWithImages(){
-        return mKeyImaCrossRefDAO.getKeywordWithImages();
+        return mKeyImaCrossRefDAO.getAllKeywordsWithImages();
     }
 
     KeywordsImagesCrossRef.ImageWithKeywords getImageWithKeywordsById(long imageId){
@@ -96,5 +93,11 @@ public class ImageRepository {
             mKeywordDAO.insertKeywords(keywords);
         });
 
+    }
+
+    void insertImagesWithKeywords(KeywordsImagesCrossRef ... joins) {
+        ImageRoomDatabase.databaseWriteExecutor.execute(()-> {
+            mKeyImaCrossRefDAO.insertImagesWithKeywords(joins);
+        });
     }
 }

@@ -26,6 +26,11 @@ public class KeywordsImagesCrossRef {
                 associateBy = @Junction(KeywordsImagesCrossRef.class)
         )
         public List<Keyword> keywords;
+
+        public ImageWithKeywords(Image image, List<Keyword> keywords) {
+            this.image = image;
+            this.keywords = keywords;
+        }
     }
 
     static class KeywordWithImages {

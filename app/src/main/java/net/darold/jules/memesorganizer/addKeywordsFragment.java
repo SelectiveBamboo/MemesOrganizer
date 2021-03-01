@@ -8,8 +8,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 import me.gujun.android.taggroup.TagGroup;
 
@@ -23,11 +29,16 @@ public class addKeywordsFragment extends Fragment {
     private static final String ARG_PARAM_URI = "imageURI";
     private static final String ARG_PARAM_NAME = "pictureName";
 
-    private ImageViewModel imgViewModel;
+    private ImageRepository imgRepo;
 
     private String picturePath;
     private String imageURI;
     private String pictureName;
+
+    //First tagGroup, to display the keywords that WILL be associated to the image
+    private TagGroup imageKeywords_TagGroup;
+    //Second tagGroup, to display the keywords that COULD be associated to the image
+    private TagGroup allKeywords_TagGroup;
 
 
     public addKeywordsFragment() {
@@ -68,19 +79,45 @@ public class addKeywordsFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_keywords_menu, menu);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        imgViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
+        FloatingActionButton fab = view.findViewById(R.id.fab_confirm_AddKeywords);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmAddKeywords();
+            }
+        });
 
-        //First tagGroup, to display the keywords that WILL be associated to the image
-        TagGroup applying_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_applying);
-        //Second tagGroup, to display the keywords that COULD be associated to the image
-        TagGroup list_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_list);
+        imgRepo = new ImageRepository(getContext());
 
-        //Fine customisations of first group
-        applying_TagGroup.setTags(new String[]{"Toug"});
-        applying_TagGroup.setOnTagChangeListener(new TagGroup.OnTagChangeListener() {
+        Image img = imgRepo.getImageByURI(imageURI);
+
+        String[] imageKeywords = new String[] {};
+        //Get all the Keywords associated to the current image, if any
+        if (img != null)
+        {
+            KeywordsImagesCrossRef.ImageWithKeywords imageWithKeywords = imgRepo.getImageWithKeywordsById(img.getImageId());
+
+            imageKeywords = StringArrayTools.StrListToStrArray(
+                    Keyword.getStrListFromKwrdsList(imageWithKeywords.keywords)
+            );
+        }
+
+
+        imageKeywords_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_applying);
+        allKeywords_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_list);
+
+        //Fine customisations of first group (image's own keywords)
+        imageKeywords_TagGroup.setTags(imageKeywords);
+        imageKeywords_TagGroup.setOnTagChangeListener(new TagGroup.OnTagChangeListener() {
             @Override
             public void onAppend(TagGroup tagGroup, String tag) {
                 /**
@@ -90,8 +127,8 @@ public class addKeywordsFragment extends Fragment {
                  */
 
                 //TODO --- Add to database
-                String[] newTagsList = StringArrayTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
-                list_TagGroup.setTags(newTagsList);
+                String[] newTagsList = StringArrayTools.removeStringFromStrArray(allKeywords_TagGroup.getTags(), tag);
+                allKeywords_TagGroup.setTags(newTagsList);
             }
 
             @Override
@@ -102,15 +139,22 @@ public class addKeywordsFragment extends Fragment {
                  *---- Add it to the other group
                  */
 
-                String[] newTagsList = StringArrayTools.addStringToStrArray(list_TagGroup.getTags(), tag);
-                list_TagGroup.setTags(newTagsList);
+                String[] newTagsList = StringArrayTools.addStringToStrArray(allKeywords_TagGroup.getTags(), tag);
+                allKeywords_TagGroup.setTags(newTagsList);
             }
         });
 
 
-        //Fine customisations of second group
-        list_TagGroup.setTags(new String[]{"Tag1", "Tag2", "Tag3"});
-        list_TagGroup.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+        //Get String Array of all keywords
+        String[] allKeywords = StringArrayTools.StrListToStrArray( Keyword.getStrListFromKwrdsList(
+                        imgRepo.getAllKeywords())
+        );
+
+        //Fine customisations of second group (all keywords available)
+        if (allKeywords != null)
+        { allKeywords_TagGroup.setTags(allKeywords); }
+
+        allKeywords_TagGroup.setOnTagClickListener(new TagGroup.OnTagClickListener() {
             @Override
             public void onTagClick(String tag) {
                 /**
@@ -119,53 +163,39 @@ public class addKeywordsFragment extends Fragment {
                  * ---remove from this group
                  */
 
-                String[] newTagsApplying = StringArrayTools.addStringToStrArray(applying_TagGroup.getTags(), tag);
-                applying_TagGroup.setTags(newTagsApplying);
+                String[] newTagsApplying = StringArrayTools.addStringToStrArray(imageKeywords_TagGroup.getTags(), tag);
+                imageKeywords_TagGroup.setTags(newTagsApplying);
 
-                String[] newTagsList = StringArrayTools.removeStringFromStrArray(list_TagGroup.getTags(), tag);
-                list_TagGroup.setTags(newTagsList);
+                String[] newTagsList = StringArrayTools.removeStringFromStrArray(allKeywords_TagGroup.getTags(), tag);
+                allKeywords_TagGroup.setTags(newTagsList);
             }
         });
 
+    }
 
-//        int nbKeywords = 15;
-//        for(int i = 0; i < nbKeywords; i++)
-//        {
-//
-//            // create a new Button
-//            Button btn = new Button(getContext());
-//
-//            // set button text
-//            btn.setText("Button " + i);
-//
-//
-//            // set gravity for text within button
-//           // btn.setGravity(Gravity.TOP);
-//
-//            // set button background
-//            btn.setBackgroundColor(Color.DKGRAY);
-//
-//            // set an OnClickListener for the button
-//            btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(getContext(), "Hola from clicked button", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//
-//            // declare and initialize LayoutParams for the layout
-//            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//// decide upon the positioning of the button //
-//// you will likely need to use the screen size to position the
-//// button anywhere other than the four corners
-//            params.setMargins(80, 80, 80, 0);
-//
-//
-//// add the view
-//            layout.addView(btn, params);
-//
-//            Log.e("DISPLAYING NAME", "Button " + i);
-//        }
+
+
+    void confirmAddKeywords() {
+        imgRepo = new ImageRepository(getContext());
+
+        Image img = imgRepo.getImageByURI(imageURI);
+
+        String[] imageKeywords = imageKeywords_TagGroup.getTags();
+
+        ArrayList<Keyword> keywords = new ArrayList<Keyword>();
+        for (int i = 0; i < imageKeywords.length; i++) {
+            keywords.add(new Keyword(imageKeywords[i]));
+        }
+
+        imgRepo.insertKeywords(keywords.toArray(new Keyword[keywords.size()]));
+        //Get the Keywords going to be associated to the current image, if any
+        if (img != null)
+        {
+            KeywordsImagesCrossRef.ImageWithKeywords imageWithKeywords = imgRepo.getImageWithKeywordsById(img.getImageId());
+
+            imageKeywords = StringArrayTools.StrListToStrArray(
+                    Keyword.getStrListFromKwrdsList(imageWithKeywords.keywords)
+            );
+        }
     }
 }

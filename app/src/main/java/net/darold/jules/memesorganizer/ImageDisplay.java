@@ -97,9 +97,19 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
 
     /**
      * Method called by the menu icon addKeywords when clicked on
-     * Use the launch AddKeywordsFragment method from the instanciate pictureBrowserFragment
+     * Use the launch AddKeywordsFragment method from the instantiated pictureBrowserFragment
      */
     public void addKeywordsFromBrowserFragment(MenuItem menuItem)
+    {
+        Log.d(TAG, "Add keywords button pressed");
+        browser.launchAddKeywordsFragment();
+    }
+
+    /**
+     * Method called by the menu icon confirm_AddKeywords when clicked on
+     * Use the launch AddKeywordsFragment method from the instantiated pictureBrowserFragment
+     */
+    public void confirmAddKeywords(MenuItem menuItem)
     {
         Log.d(TAG, "Add keywords button pressed");
         browser.launchAddKeywordsFragment();

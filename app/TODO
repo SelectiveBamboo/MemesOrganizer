@@ -1,2 +1,3 @@
 Add contextual Toolbar (for multiselect, etc...)
 AutoCompleteTextView
+To reimplement a the cross-ref table, in order to ally the advantages of crossRef (e.g. to get easily keywords per image) and FTS
