@@ -33,24 +33,30 @@ public class Image {
     private String imagePath;
 
     @ColumnInfo(name = "imageKeywords")
-    private String imageKeywords;
+    private String imageKeywords;   //For FTS
+
+    @ColumnInfo(name = "imageHash")
+    private String imageHash;
 
 
-    public Image(@NonNull String imageURI, String imageName, String imagePath, String imageKeywords) {
+    public Image(@NonNull String imageURI, String imageName, String imagePath, String imageKeywords, String imageHash) {
         this.imageURI = imageURI;
         this.imageName = imageName;
         this.imagePath = imagePath;
         this.imageKeywords = imageKeywords;
+        this.imageHash = imageHash;
     }
 
     public void setImageId(long imageId){this.imageId = imageId;}
-
 
     public long getImageId(){return imageId;}
     public String getImageURI(){return this.imageURI;}
     public String getImageName(){return this.imageName;}
     public String getImagePath(){return this.imagePath;}
     public String getImageKeywords(){return imageKeywords;}
+    public String getImageHash(){return imageHash;}
+
+
 }
 
 

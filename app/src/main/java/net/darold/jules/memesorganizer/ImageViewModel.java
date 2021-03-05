@@ -35,7 +35,7 @@ public class ImageViewModel extends AndroidViewModel {
         return mImgRepo.getAllImagesByName(name);
     }
 
-    Image getImageByURI(String URI){return mImgRepo.getImageByURI(URI);}
+    Image getImageByPath(String path){return mImgRepo.getImageByPath(path);}
 
     List<Image> getAllImagesWithKeywords(String matchQuery){return mImgRepo.getAllImagesWithKeywords(matchQuery);}
 

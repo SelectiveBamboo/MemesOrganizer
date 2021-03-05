@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface KeywordDAO {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertKeywords(Keyword... keywords);
 
     @Delete
@@ -20,6 +20,9 @@ public interface KeywordDAO {
 
     @Query("SELECT * FROM keywords_table ORDER BY keyword ASC")
     List<Keyword> getAllKeywords();
+
+    @Query("SELECT * FROM keywords_table WHERE keyword NOT IN (:notInKeywords) ORDER BY keyword ASC")
+    List<Keyword> getAllKeywordsNotIn(String[] notInKeywords);
 
     @Query("SELECT * FROM keywords_table WHERE keyword LIKE :alikeKeyword ORDER BY keyword ASC")
     List<Keyword> searchAlikeKeywords(String alikeKeyword);

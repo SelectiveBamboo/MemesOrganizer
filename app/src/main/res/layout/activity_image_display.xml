@@ -11,28 +11,87 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/head"
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            app:cardBackgroundColor="@color/skyblue">
+            android:layout_gravity="top"
+            android:foregroundGravity="top"
+            app:titleTextColor="@color/white"
+            android:background="@android:color/holo_orange_dark"
+            android:id="@+id/imageDisplayToolbar">
 
-            <TextView
-                android:id="@+id/foldername"
+            <SearchView
+                android:id="@+id/searchView_ImagesKeywords"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:text="@string/folderName"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp" />
 
-        </androidx.cardview.widget.CardView>
+                android:queryHint="@string/search_hint"
+                android:layout_alignParentTop="true">
+            </SearchView>
+        </androidx.appcompat.widget.Toolbar>
+
+
+        <ScrollView android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:id="@+id/scrollView_search_imageDisplayActivity">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="auto_fit"
+                android:horizontalSpacing="6dp"
+                android:verticalSpacing="6dp"
+                tools:context=".addKeywordsFragment"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <me.gujun.android.taggroup.TagGroup
+                        android:id="@+id/tag_group_selection"
+                        style="@style/TagGroup.Beauty_Red.Inverse" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:backgroundTint="@color/design_default_color_on_secondary"
+                       android:id="@+id/launch_search_button"
+                       android:layout_width="48dp"
+                       android:layout_height="16dp"
+                       android:onClick="launchSearch"
+                       android:text="@string/launch_search"/>
+                </LinearLayout>
+
+                <me.gujun.android.taggroup.TagGroup
+                    android:paddingTop="15dp"
+                    android:id="@+id/tag_group_suggestion"
+                    android:autofillHints="@string/no_such_keyword"
+                    style="@style/TagGroup" />
+
+            </LinearLayout>
+        </ScrollView>
+
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/head"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            app:cardBackgroundColor="@color/skyblue">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/foldername"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center|start"-->
+<!--                android:text="@string/folderName"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:layout_marginLeft="10dp"-->
+<!--                android:layout_marginStart="10dp" />-->
+
+<!--        </androidx.cardview.widget.CardView>-->
 
         <net.darold.jules.memesorganizer.AutoFitRecyclerView
-            android:layout_below="@id/head"
+            android:layout_below="@id/imageDisplayToolbar"
             android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -48,8 +107,19 @@
 
         </net.darold.jules.memesorganizer.AutoFitRecyclerView>
 
+
     </RelativeLayout>
 
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_search"
+        android:background="@color/colorAccent"
+        app:backgroundTint="@color/colorAccent"
+        android:contentDescription="Search for images on their keywords" />-->
 
 
     <ProgressBar
@@ -58,6 +128,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         tools:visibility="gone" />
+
+
 
 
 </FrameLayout>

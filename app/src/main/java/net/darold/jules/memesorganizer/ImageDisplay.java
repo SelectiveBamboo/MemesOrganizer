@@ -1,22 +1,37 @@
 package net.darold.jules.memesorganizer;
 
+import android.app.SearchManager;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Fade;
+import androidx.transition.Visibility;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import me.gujun.android.taggroup.TagGroup;
 
 /**
  * Author CodeBoy722
@@ -30,36 +45,147 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     RecyclerView imageRecycler;
     ArrayList<pictureFacer> allpictures;
     ProgressBar load;
-    String foldePath;
+    String folderPath;
     TextView folderName;
     pictureBrowserFragment browser;
     String TAG = "Image Display Activity";
+
+    FloatingActionButton fabSearch;
+    SearchView searchView;
+    ScrollView scrollview_Search;
+    TagGroup taggroup_suggestion;
+    TagGroup taggroup_selection;
+
+    ImageRepository imgRepo;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
 
-        folderName = findViewById(R.id.foldername);
-        folderName.setText(getIntent().getStringExtra("folderName"));
+        imgRepo = new ImageRepository(getApplicationContext());
 
-        foldePath =  getIntent().getStringExtra("folderPath");
-        allpictures = new ArrayList<>();
         imageRecycler = findViewById(R.id.recycler);
+
+        searchView = findViewById(R.id.searchView_ImagesKeywords);
+        scrollview_Search = findViewById(R.id.scrollView_search_imageDisplayActivity);
+
+        handleSearchView();
+
+//        fabSearch = findViewById(R.id.fab_search);
+//        fabSearch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                onSearchRequested();
+//            }
+//        });
+
+
+        setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
+
+        toolbar = (Toolbar) findViewById(R.id.imageDisplayToolbar);
+        setSupportActionBar(toolbar);
+
+        allpictures = new ArrayList<>();
         imageRecycler.addItemDecoration(new MarginDecoration(this));
         imageRecycler.hasFixedSize();
         load = findViewById(R.id.loader);
 
+        // Get the intent, verify the action and get the query
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()))
+        {
+            String query = intent.getStringExtra("query");
 
-        if(allpictures.isEmpty()){
             load.setVisibility(View.VISIBLE);
-            allpictures = getAllImagesByFolder(foldePath);
+            allpictures = getPictureFacerOnSearchQuery(query);
+
+            getSupportActionBar().setTitle("Results: " + allpictures.size());
+            toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                { finish(); }
+            });
+
             imageRecycler.setAdapter(new picture_Adapter(allpictures,ImageDisplay.this,this));
             load.setVisibility(View.GONE);
-        }else{
+        }
+        else
+        {
+            getSupportActionBar().setTitle(getIntent().getStringExtra("folderName"));
+            folderPath =  getIntent().getStringExtra("folderPath");
 
+            if(allpictures.isEmpty())
+            {
+                load.setVisibility(View.VISIBLE);
+                allpictures = getAllImagesByFolder(folderPath);
+                imageRecycler.setAdapter(new picture_Adapter(allpictures,ImageDisplay.this,this));
+                load.setVisibility(View.GONE);
+            }
         }
     }
+
+    private void handleSearchView() {
+
+        String[] allKeywords = Keyword.getStrArrayFromKwrdsList(imgRepo.getAllKeywords());
+
+        taggroup_suggestion = findViewById(R.id.tag_group_suggestion);
+        taggroup_suggestion.setTags(allKeywords);
+
+        taggroup_selection = findViewById(R.id.tag_group_selection);
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    scrollview_Search.setVisibility(View.VISIBLE);
+                    imageRecycler.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                String[] matchingArray = StringArrayTools.getStrArrayContainingStr(allKeywords, newText);
+                taggroup_suggestion.setTags(matchingArray);
+                return false;
+            }
+        });
+    }
+
+    public void launchSearch(View view){
+        String[] tagSelected = taggroup_selection.getTags();
+
+        String searchQuery = createSearchQuery(tagSelected);
+
+        Intent intent = new Intent(this, ImageDisplay.class);
+        intent.putExtra("query", searchQuery);
+        intent.setAction(Intent.ACTION_SEARCH);
+        searchView.setVisibility(View.INVISIBLE);
+        imageRecycler.setVisibility(View.VISIBLE);
+        startActivity(intent);
+    }
+
+    private String createSearchQuery(String[] elementsQuery) {
+        StringBuffer strBuffer = new StringBuffer();
+
+        strBuffer.append(elementsQuery[0]);
+        for (int i = 1; i < elementsQuery.length ; i++) {
+            strBuffer.append(' ');
+            strBuffer.append(elementsQuery[i]);
+        }
+
+        return strBuffer.toString();
+    }
+
 
     /**
      *
@@ -90,29 +216,28 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
                 .commit();
     }
 
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.image_display_menu, menu);
+//        return true;
+//    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        if(id == R.id.search_ImagesKeywords) {
+//            Toast.makeText(getApplicationContext(), "Search", Toast.LENGTH_LONG).show();
+//            onSearchRequested();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+
+
     @Override
     public void onPicClicked(String pictureFolderPath,String folderName) {
 
-    }
-
-    /**
-     * Method called by the menu icon addKeywords when clicked on
-     * Use the launch AddKeywordsFragment method from the instantiated pictureBrowserFragment
-     */
-    public void addKeywordsFromBrowserFragment(MenuItem menuItem)
-    {
-        Log.d(TAG, "Add keywords button pressed");
-        browser.launchAddKeywordsFragment();
-    }
-
-    /**
-     * Method called by the menu icon confirm_AddKeywords when clicked on
-     * Use the launch AddKeywordsFragment method from the instantiated pictureBrowserFragment
-     */
-    public void confirmAddKeywords(MenuItem menuItem)
-    {
-        Log.d(TAG, "Add keywords button pressed");
-        browser.launchAddKeywordsFragment();
     }
 
     /**
@@ -137,6 +262,8 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
 
                 pic.setPictureSize(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)));
 
+              //  pic.setImageUri(cursor.getString(cursor.getColumnIndexOrThrow((MediaStore.Images.Media.EXTERNAL_CONTENT_URI).toString())));
+
                 images.add(pic);
             }while(cursor.moveToNext());
             cursor.close();
@@ -151,7 +278,37 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         return images;
     }
 
+    /**
+     * This Method gets all the images matching the fts3 query passed in parameter
+     * and adapt it to a list of pictureFacer
+     * @param query a String fts query to search images on their associated keywords
+     */
+    private ArrayList<pictureFacer> getPictureFacerOnSearchQuery(String query) {
+
+        List<Image> images = imgRepo.searchAllImagesWithKeywords(query);
+
+        ArrayList<pictureFacer> picsArray = new ArrayList<>();
+
+        for (int i = 0; i < images.size(); i++) {
+            pictureFacer pic = new pictureFacer();
+
+            pic.setImageUri(images.get(i).getImageURI());
+            pic.setPicturePath(images.get(i).getImagePath());
+            pic.setPicturName(images.get(i).getImageName());
+
+            picsArray.add(pic);
+        }
+        return picsArray;
+    }
 
 
-
+    /**
+     * Method called by the menu icon addKeywords once clicked on
+     * Use the launch AddKeywordsFragment method from the instantiated pictureBrowserFragment
+     */
+    public void addKeywordsFromBrowserFragment(MenuItem menuItem)
+    {
+        Log.d(TAG, "Add keywords button pressed");
+        browser.launchAddKeywordsFragment();
+    }
 }

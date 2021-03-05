@@ -16,24 +16,29 @@ import java.util.List;
 public interface KeywordsImagesCrossRefDAO {
 
     @Transaction
-    @Query("SELECT images_table.* FROM images_table " +
-            "INNER JOIN images_keywords_join " +
-            "ON images_table.imageId = images_keywords_join.imageId")
+    @Query("SELECT * FROM images_table")
     List<KeywordsImagesCrossRef.ImageWithKeywords> getAllImagesWithKeywords();
+//    SELECT images_table.* FROM images_table " +
+//            "INNER JOIN images_keywords_join " +
+//            "ON images_table.imageId = images_keywords_join.imageId
 
     @Transaction
     @Query("SELECT * FROM images_table WHERE imageId = :imageId LIMIT 1")
     KeywordsImagesCrossRef.ImageWithKeywords getImageWithKeywordsById(long imageId);
 
     @Transaction
-    @Query("SELECT keywords_table.* FROM keywords_table " +
-            "INNER JOIN images_keywords_join " +
-            "ON keywords_table.keyword = images_keywords_join.keyword")
+    @Query("SELECT * FROM keywords_table")
     List<KeywordsImagesCrossRef.KeywordWithImages> getAllKeywordsWithImages();
+//    "SELECT keywords_table.* FROM keywords_table " +
+//            "INNER JOIN images_keywords_join " +
+//            "ON keywords_table.keyword = images_keywords_join.keyword"
 
-    @Insert
-    void insertImagesWithKeywords(KeywordsImagesCrossRef ... joins);
+    @Query("INSERT OR REPLACE INTO images_keywords_join VALUES (:keyword, :imageId)")
+    void insertImageWithKeyword(long imageId, String keyword);
+
+    @Query("DELETE FROM images_keywords_join WHERE keyword NOT IN (:keywordsArray) AND imageId = :imageId")
+    void deleteKeywordsInImages(long imageId, String[] keywordsArray);
 
     @Delete
-    void deleteImagesWithKeywords(KeywordsImagesCrossRef... joins);
+    void deleteImagesWithKeywords(KeywordsImagesCrossRef ... joins);
 }

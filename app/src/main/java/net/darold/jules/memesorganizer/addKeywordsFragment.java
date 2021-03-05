@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -15,7 +16,9 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import me.gujun.android.taggroup.TagGroup;
 
@@ -65,6 +68,9 @@ public class addKeywordsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getActivity().findViewById(R.id.searchView_ImagesKeywords).setVisibility(View.INVISIBLE);
+
         if (getArguments() != null) {
             pictureName = getArguments().getString(ARG_PARAM_NAME);
             picturePath = getArguments().getString(ARG_PARAM_PATH);
@@ -81,7 +87,6 @@ public class addKeywordsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.add_keywords_menu, menu);
     }
 
     @Override
@@ -98,7 +103,7 @@ public class addKeywordsFragment extends Fragment {
 
         imgRepo = new ImageRepository(getContext());
 
-        Image img = imgRepo.getImageByURI(imageURI);
+        Image img = imgRepo.getImageByPath(picturePath);
 
         String[] imageKeywords = new String[] {};
         //Get all the Keywords associated to the current image, if any
@@ -122,11 +127,9 @@ public class addKeywordsFragment extends Fragment {
             public void onAppend(TagGroup tagGroup, String tag) {
                 /**
                  * Things to do when a new tag is created (append)
-                 * ---Add to database if needed
                  * ---Remove from the other group if existing
                  */
 
-                //TODO --- Add to database
                 String[] newTagsList = StringArrayTools.removeStringFromStrArray(allKeywords_TagGroup.getTags(), tag);
                 allKeywords_TagGroup.setTags(newTagsList);
             }
@@ -146,9 +149,7 @@ public class addKeywordsFragment extends Fragment {
 
 
         //Get String Array of all keywords
-        String[] allKeywords = StringArrayTools.StrListToStrArray( Keyword.getStrListFromKwrdsList(
-                        imgRepo.getAllKeywords())
-        );
+        String[] allKeywords = Keyword.getStrArrayFromKwrdsList(imgRepo.getAllKeywords());
 
         //Fine customisations of second group (all keywords available)
         if (allKeywords != null)
@@ -175,27 +176,32 @@ public class addKeywordsFragment extends Fragment {
 
 
 
-    void confirmAddKeywords() {
+    void confirmAddKeywords()
+    {
         imgRepo = new ImageRepository(getContext());
 
-        Image img = imgRepo.getImageByURI(imageURI);
+        String[] strKeywords = imageKeywords_TagGroup.getTags();
 
-        String[] imageKeywords = imageKeywords_TagGroup.getTags();
+        //May the current image never have been in the database before
+        imgRepo.insertImages(new Image(imageURI, pictureName, picturePath, StringArrayTools.joinStringArrayIntoString(strKeywords, " "), ""));
 
-        ArrayList<Keyword> keywords = new ArrayList<Keyword>();
-        for (int i = 0; i < imageKeywords.length; i++) {
-            keywords.add(new Keyword(imageKeywords[i]));
+        ArrayList<Keyword> keywordsArraylist = new ArrayList<Keyword>();
+        for (int i = 0; i < strKeywords.length; i++) {
+            keywordsArraylist.add(new Keyword(strKeywords[i]));
         }
 
-        imgRepo.insertKeywords(keywords.toArray(new Keyword[keywords.size()]));
-        //Get the Keywords going to be associated to the current image, if any
-        if (img != null)
-        {
-            KeywordsImagesCrossRef.ImageWithKeywords imageWithKeywords = imgRepo.getImageWithKeywordsById(img.getImageId());
+        Keyword[] keywords = keywordsArraylist.toArray(new Keyword[keywordsArraylist.size()]);
 
-            imageKeywords = StringArrayTools.StrListToStrArray(
-                    Keyword.getStrListFromKwrdsList(imageWithKeywords.keywords)
-            );
-        }
+        //TODO - All this part should be performed through a transaction
+        //May new keywords have been created, better to have them in the database so
+        imgRepo.insertKeywords(keywords);
+
+        Image currentImage = imgRepo.getImageByPath(picturePath);
+
+        String[] keywordsAsStrList =  StringArrayTools.StrListToStrArray( Keyword.getStrListFromKwrdsList( Arrays.asList(keywords) ) );
+        imgRepo.updateImageWithKeywords(currentImage.getImageId(), keywordsAsStrList);
+
+        pictureBrowserFragment.hasAddKeywordBtnBeenClicked = false;
+        getParentFragmentManager().beginTransaction().remove(this).commit();
     }
 }

@@ -40,7 +40,7 @@ import java.util.ArrayList;
 public class pictureBrowserFragment extends Fragment implements imageIndicatorListener {
 
     private ArrayList<pictureFacer> allImages = new ArrayList<>();
-    private int position;
+    private int currentPosition;
     private Context ctxt;
     private ImageView image;
     private ViewPager imagePager;
@@ -49,10 +49,11 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     private int viewVisibilitylooper;
     private ImagesPagerAdapter pagingImages;
     private int previousSelected = -1;
+    private Fragment thisFragment = this;
 
     private Toolbar toolbar;
 
-    private boolean hasAddKeywordBtnBeenClicked = false;
+    public static boolean hasAddKeywordBtnBeenClicked = false;
 
     public pictureBrowserFragment(){
 
@@ -60,7 +61,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
     public pictureBrowserFragment(ArrayList<pictureFacer> allImages, int imagePosition, Context anim) {
         this.allImages = allImages;
-        this.position = imagePosition;
+        this.currentPosition = imagePosition;
         this.ctxt = anim;
     }
 
@@ -76,12 +77,19 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
         View view = inflater.inflate(R.layout.picture_browser, container, false);
 
-        toolbar = (Toolbar) view.findViewById(R.id.pictureBrowserToolbar);
-        toolbar.setTitle("");
+        toolbar = view.findViewById(R.id.pictureBrowserToolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
 
         setHasOptionsMenu(true);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        getActivity().setTitle("");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().popBackStackImmediate();
+            }
+        });
         toolbar.inflateMenu(R.menu.picture_viewing_menu);
 
         return view;
@@ -111,7 +119,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         pagingImages = new ImagesPagerAdapter();
         imagePager.setAdapter(pagingImages);
         imagePager.setOffscreenPageLimit(3);
-        imagePager.setCurrentItem(position);//displaying the image at the current position passed by the ImageDisplay Activity
+        imagePager.setCurrentItem(currentPosition);//displaying the image at the current position passed by the ImageDisplay Activity
 
 
         /**
@@ -125,10 +133,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
         //adjusting the recyclerView indicator to the current position of the viewPager, also highlights the image in recyclerView with respect to the
         //viewPager's position
-        allImages.get(position).setSelected(true);
-        previousSelected = position;
+        allImages.get(currentPosition).setSelected(true);
+        previousSelected = currentPosition;
         indicatorAdapter.notifyDataSetChanged();
-        indicatorRecycler.scrollToPosition(position);
+        indicatorRecycler.scrollToPosition(currentPosition);
 
 
         /**
@@ -143,6 +151,8 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             @Override
             public void onPageSelected(int position) {
+
+                currentPosition = position;
 
                 if(previousSelected != -1){
                     allImages.get(previousSelected).setSelected(false);
@@ -184,10 +194,15 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        hasAddKeywordBtnBeenClicked = false;
+    }
 
     /**
      * this method of the imageIndicatorListerner interface helps in communication between the fragment and the recyclerView Adapter
-     * each time an iten in the adapter is clicked the position of that item is communicated in the fragment and the position of the
+     * each time an item in the adapter is clicked the position of that item is communicated in the fragment and the position of the
      * viewPager is adjusted as follows
      * @param ImagePosition The position of an image item in the RecyclerView Adapter
      */
@@ -210,6 +225,12 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
      * the imageViewPager's adapter
      */
     private class ImagesPagerAdapter extends PagerAdapter {
+
+
+        int currentPosition;
+
+        public void setCurrentPosition(int currentPosition) { this.currentPosition = currentPosition; }
+        public int getCurrentPosition() { return currentPosition; }
 
         @Override
         public int getCount() {
@@ -281,7 +302,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     {
         if ( !hasAddKeywordBtnBeenClicked )
         {
-            pictureFacer currentPicture = allImages.get(position);
+            pictureFacer currentPicture = allImages.get(currentPosition);
 
             Bundle bundle = new Bundle();
             bundle.putString("picturePath", currentPicture.getPicturePath());
@@ -290,7 +311,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             hasAddKeywordBtnBeenClicked = true;
 
-            Toast.makeText(ctxt, "Hya tha", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctxt, ""+currentPosition, Toast.LENGTH_SHORT).show();
             getChildFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_container_picture_browser, addKeywordsFragment.class, bundle)

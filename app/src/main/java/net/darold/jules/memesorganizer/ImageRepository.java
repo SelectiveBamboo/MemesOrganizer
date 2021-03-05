@@ -3,6 +3,8 @@ package net.darold.jules.memesorganizer;
 import android.content.Context;
 
 import androidx.room.Room;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.List;
 
@@ -15,28 +17,32 @@ public class ImageRepository {
     private List<Keyword> mAllKeyword;
     private KeywordsImagesCrossRefDAO mKeyImaCrossRefDAO;
 
+    private static ImageRoomDatabase db;
 
     ImageRepository(Context context) {
         //ImageRoomDatabase db = ImageRoomDatabase.getDatabase(application);
-        ImageRoomDatabase db = Room.databaseBuilder(context, ImageRoomDatabase.class, "image_database")
-                                .allowMainThreadQueries()
-                                .build();
-
+        if (db == null) {
+            db = Room.databaseBuilder(context, ImageRoomDatabase.class, "image_database")
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build();
+        }
         mImageDAO = db.imageDAO();
         mKeywordDAO = db.keywordDAO();
         mKeyImaCrossRefDAO = db.keywordsImagesCrossRefDAO();
-
-        mAllImages = mImageDAO.getAllImages();
-        mAllKeyword = mKeywordDAO.getAllKeywords();
     }
 
 
     List<Image> getAllImages(){
-        return mAllImages;
+        return mImageDAO.getAllImages();
     }
 
     List<Keyword> getAllKeywords(){
-        return mAllKeyword;
+        return mKeywordDAO.getAllKeywords();
+    }
+
+    List<Keyword> getAllKeywordsNotIn(String[] notInKeywords){
+        return mKeywordDAO.getAllKeywordsNotIn(notInKeywords);
     }
 
     List<KeywordsImagesCrossRef.ImageWithKeywords> getImageWithKeywords(){
@@ -59,7 +65,9 @@ public class ImageRepository {
         return mImageDAO.searchAllImagesByName(name);
     }
 
-    Image getImageByURI(String URI){return mImageDAO.searchImageByURI(URI);}
+    List<Image> searchAllImagesWithKeywords(String matchQuery){return mImageDAO.searchAllImagesWithKeywords(matchQuery);}
+
+    Image getImageByPath(String path){return mImageDAO.searchImageByPath(path);}
 
     List<Image> getAllImagesWithKeywords(String matchQuery){return mImageDAO.searchAllImagesWithKeywords(matchQuery);}
 
@@ -95,9 +103,17 @@ public class ImageRepository {
 
     }
 
-    void insertImagesWithKeywords(KeywordsImagesCrossRef ... joins) {
-        ImageRoomDatabase.databaseWriteExecutor.execute(()-> {
-            mKeyImaCrossRefDAO.insertImagesWithKeywords(joins);
-        });
+    void updateImageWithKeywords(long imageId, String[] keywords) {
+        for (int i = 0; i < keywords.length ; i++) {
+            mKeyImaCrossRefDAO.insertImageWithKeyword(imageId, keywords[i]);
+        }
+
+        mKeyImaCrossRefDAO.deleteKeywordsInImages(imageId, keywords);
+
+        String strKeywords = StringArrayTools.joinStringArrayIntoString(keywords, " ");
+        mImageDAO.insertKeywordsImageForFTS(strKeywords, imageId);
+//        ImageRoomDatabase.databaseWriteExecutor.execute(()-> {
+//            mKeyImaCrossRefDAO.insertImageWithKeyword(imageId, keyword);
+//        });
     }
 }

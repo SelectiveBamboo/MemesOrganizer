@@ -27,4 +27,12 @@ public class Keyword {
 
         return listStr;
     }
+
+    static String[] getStrArrayFromKwrdsList(List<Keyword> kwrds)
+    {
+        List<String> listStr = new ArrayList<String>();
+        for (Keyword kwrd : kwrds) { listStr.add(kwrd.getKeyword()); }
+
+        return StringArrayTools.StrListToStrArray(listStr);
+    }
 }

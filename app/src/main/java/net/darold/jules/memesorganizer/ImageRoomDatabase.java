@@ -9,8 +9,7 @@ import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-@Database(entities = {Image.class, Keyword.class, ImageFTS.class, KeywordsImagesCrossRef.class}, version = 2, exportSchema = false)
+@Database(entities = {Image.class, Keyword.class, ImageFTS.class, KeywordsImagesCrossRef.class}, version = 6, exportSchema = false)
 public abstract class ImageRoomDatabase extends RoomDatabase {
 
     public abstract ImageDAO imageDAO();
@@ -29,6 +28,8 @@ public abstract class ImageRoomDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             ImageRoomDatabase.class, "image_keywords_database")
+                            .allowMainThreadQueries()
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }
