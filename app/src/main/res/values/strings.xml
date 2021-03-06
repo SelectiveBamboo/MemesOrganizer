@@ -11,6 +11,9 @@
     <string name="search_hint">Search image by keywords</string>
     <string name="search">Search</string>
     <string name="no_such_keyword">No such keyword</string>
-    <string name="launch_search">"Let's see the results "</string>
+    <string name="launch_search">"Search kiddo !"</string>
+    <string name="search_suggestions">"Keywords suggestions :"</string>
+    <string name="search_selection">"Keywords Selection :"</string>
+    <string name="no_search_selection">No keywords currently selected for the search</string>
 
 </resources>

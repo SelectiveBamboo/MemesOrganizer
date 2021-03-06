@@ -33,10 +33,10 @@ public interface KeywordsImagesCrossRefDAO {
 //            "INNER JOIN images_keywords_join " +
 //            "ON keywords_table.keyword = images_keywords_join.keyword"
 
-    @Query("INSERT OR REPLACE INTO images_keywords_join VALUES (:keyword, :imageId)")
+    @Query("INSERT OR IGNORE INTO images_keywords_join (keyword, imageId) VALUES (:keyword, :imageId)")
     void insertImageWithKeyword(long imageId, String keyword);
 
-    @Query("DELETE FROM images_keywords_join WHERE keyword NOT IN (:keywordsArray) AND imageId = :imageId")
+    @Query("DELETE FROM images_keywords_join WHERE imageId = :imageId AND keyword NOT IN (:keywordsArray)")
     void deleteKeywordsInImages(long imageId, String[] keywordsArray);
 
     @Delete

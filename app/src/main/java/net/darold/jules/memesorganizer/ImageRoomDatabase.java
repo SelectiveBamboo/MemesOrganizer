@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Image.class, Keyword.class, ImageFTS.class, KeywordsImagesCrossRef.class}, version = 6, exportSchema = false)
+@Database(entities = {Image.class, Keyword.class, ImageFTS.class, KeywordsImagesCrossRef.class}, version = 8, exportSchema = false)
 public abstract class ImageRoomDatabase extends RoomDatabase {
 
     public abstract ImageDAO imageDAO();

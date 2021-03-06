@@ -5,8 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -38,10 +37,12 @@ public class addKeywordsFragment extends Fragment {
     private String imageURI;
     private String pictureName;
 
+    private Toolbar toolbar;
+
     //First tagGroup, to display the keywords that WILL be associated to the image
     private TagGroup imageKeywords_TagGroup;
     //Second tagGroup, to display the keywords that COULD be associated to the image
-    private TagGroup allKeywords_TagGroup;
+    private TagGroup listKeywords_TagGroup;
 
 
     public addKeywordsFragment() {
@@ -69,7 +70,7 @@ public class addKeywordsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActivity().findViewById(R.id.searchView_ImagesKeywords).setVisibility(View.INVISIBLE);
+ //       getActivity().findViewById(R.id.searchView_ImagesKeywords).setVisibility(View.INVISIBLE);
 
         if (getArguments() != null) {
             pictureName = getArguments().getString(ARG_PARAM_NAME);
@@ -80,18 +81,17 @@ public class addKeywordsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_keywords, container, false);
-    }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+        View view = inflater.inflate(R.layout.fragment_add_keywords, container, false);
+        setHasOptionsMenu(true);
+
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setHasOptionsMenu(true);
 
         FloatingActionButton fab = view.findViewById(R.id.fab_confirm_AddKeywords);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +118,7 @@ public class addKeywordsFragment extends Fragment {
 
 
         imageKeywords_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_applying);
-        allKeywords_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_list);
+        listKeywords_TagGroup = (TagGroup) view.findViewById(R.id.tag_group_list);
 
         //Fine customisations of first group (image's own keywords)
         imageKeywords_TagGroup.setTags(imageKeywords);
@@ -130,20 +130,14 @@ public class addKeywordsFragment extends Fragment {
                  * ---Remove from the other group if existing
                  */
 
-                String[] newTagsList = StringArrayTools.removeStringFromStrArray(allKeywords_TagGroup.getTags(), tag);
-                allKeywords_TagGroup.setTags(newTagsList);
+                String[] newTagsList = StringArrayTools.removeStringFromStrArray(listKeywords_TagGroup.getTags(), tag);
+                listKeywords_TagGroup.setTags(newTagsList);
             }
 
             @Override
             public void onDelete(TagGroup tagGroup, String tag) {
-                /**
-                 * Things to do when tag's deleted in the group
-                 *
-                 *---- Add it to the other group
-                 */
-
-                String[] newTagsList = StringArrayTools.addStringToStrArray(allKeywords_TagGroup.getTags(), tag);
-                allKeywords_TagGroup.setTags(newTagsList);
+                String[] newTagsList = StringArrayTools.addStringToStrArray(listKeywords_TagGroup.getTags(), tag);
+                listKeywords_TagGroup.setTags(newTagsList);
             }
         });
 
@@ -153,9 +147,13 @@ public class addKeywordsFragment extends Fragment {
 
         //Fine customisations of second group (all keywords available)
         if (allKeywords != null)
-        { allKeywords_TagGroup.setTags(allKeywords); }
+        {
+            //Set the tag group with all the keywords but those already associated to the current image
+            String[] listKeywords = StringArrayTools.removeStrArrayFromStrArray(allKeywords, imageKeywords);
+            listKeywords_TagGroup.setTags(listKeywords);
+        }
 
-        allKeywords_TagGroup.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+        listKeywords_TagGroup.setOnTagClickListener(new TagGroup.OnTagClickListener() {
             @Override
             public void onTagClick(String tag) {
                 /**
@@ -167,14 +165,17 @@ public class addKeywordsFragment extends Fragment {
                 String[] newTagsApplying = StringArrayTools.addStringToStrArray(imageKeywords_TagGroup.getTags(), tag);
                 imageKeywords_TagGroup.setTags(newTagsApplying);
 
-                String[] newTagsList = StringArrayTools.removeStringFromStrArray(allKeywords_TagGroup.getTags(), tag);
-                allKeywords_TagGroup.setTags(newTagsList);
+                String[] newTagsList = StringArrayTools.removeStringFromStrArray(listKeywords_TagGroup.getTags(), tag);
+                listKeywords_TagGroup.setTags(newTagsList);
             }
         });
-
     }
 
-
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+    }
 
     void confirmAddKeywords()
     {
@@ -182,7 +183,7 @@ public class addKeywordsFragment extends Fragment {
 
         String[] strKeywords = imageKeywords_TagGroup.getTags();
 
-        //May the current image never have been in the database before
+        //May the current image never has been added in the database
         imgRepo.insertImages(new Image(imageURI, pictureName, picturePath, StringArrayTools.joinStringArrayIntoString(strKeywords, " "), ""));
 
         ArrayList<Keyword> keywordsArraylist = new ArrayList<Keyword>();
@@ -196,7 +197,10 @@ public class addKeywordsFragment extends Fragment {
         //May new keywords have been created, better to have them in the database so
         imgRepo.insertKeywords(keywords);
 
-        Image currentImage = imgRepo.getImageByPath(picturePath);
+        Image currentImage;
+        do {
+           currentImage = imgRepo.getImageByPath(picturePath);
+        }while(currentImage == null);
 
         String[] keywordsAsStrList =  StringArrayTools.StrListToStrArray( Keyword.getStrListFromKwrdsList( Arrays.asList(keywords) ) );
         imgRepo.updateImageWithKeywords(currentImage.getImageId(), keywordsAsStrList);

@@ -1,6 +1,7 @@
 package net.darold.jules.memesorganizer;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -88,9 +89,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
             @Override
             public void onClick(View v) {
                 getParentFragmentManager().popBackStackImmediate();
+                hasAddKeywordBtnBeenClicked = false;
             }
         });
-        toolbar.inflateMenu(R.menu.picture_viewing_menu);
 
         return view;
     }
@@ -98,6 +99,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
         inflater.inflate(R.menu.picture_viewing_menu, menu);
     }
 
@@ -311,10 +313,11 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             hasAddKeywordBtnBeenClicked = true;
 
-            Toast.makeText(ctxt, ""+currentPosition, Toast.LENGTH_SHORT).show();
-            getChildFragmentManager().beginTransaction()
+            Toast.makeText(ctxt, String.valueOf(currentPosition), Toast.LENGTH_SHORT).show();
+            getParentFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_container_picture_browser, addKeywordsFragment.class, bundle)
+                    .addToBackStack(null)
                     .commit();
 
         }

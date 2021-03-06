@@ -20,19 +20,21 @@
             android:background="@android:color/holo_orange_dark"
             android:id="@+id/imageDisplayToolbar">
 
-            <SearchView
-                android:id="@+id/searchView_ImagesKeywords"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:queryHint="@string/search_hint"
-                android:layout_alignParentTop="true">
-            </SearchView>
+<!--            <SearchView-->
+<!--                android:id="@+id/searchView_ImagesKeywords"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@color/skyblue"-->
+<!--                android:queryHint="@string/search_hint"-->
+<!--                android:searchIcon="@drawable/ic_search" />-->
         </androidx.appcompat.widget.Toolbar>
 
 
-        <ScrollView android:layout_width="match_parent"
+        <ScrollView
+            android:layout_below="@id/imageDisplayToolbar"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/transparent_lightgrey"
             android:visibility="invisible"
             android:id="@+id/scrollView_search_imageDisplayActivity">
 
@@ -46,26 +48,56 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_selection"
+                        android:textColor="@color/black"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="10dp" />
+
                     <me.gujun.android.taggroup.TagGroup
+                        android:contentDescription="@string/search_selection"
+                        android:autofillHints="@string/no_search_selection"
+                        android:minHeight="15dp"
                         android:id="@+id/tag_group_selection"
                         style="@style/TagGroup.Beauty_Red.Inverse" />
 
                     <androidx.appcompat.widget.AppCompatButton
-                        android:backgroundTint="@color/design_default_color_on_secondary"
-                       android:id="@+id/launch_search_button"
-                       android:layout_width="48dp"
-                       android:layout_height="16dp"
-                       android:onClick="launchSearch"
-                       android:text="@string/launch_search"/>
+                        android:id="@+id/launch_search_button"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_search"
+                        android:paddingHorizontal="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:foregroundGravity="top"
+                        android:textColor="@color/white"
+                        android:background="@color/colorAccent"
+                        android:onClick="launchSearch"
+                        android:text="@string/launch_search" />
                 </LinearLayout>
 
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_suggestions"
+                        android:textColor="@color/black"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="10dp" />
+
                 <me.gujun.android.taggroup.TagGroup
+                    android:contentDescription="@string/search_suggestions"
                     android:paddingTop="15dp"
                     android:id="@+id/tag_group_suggestion"
                     android:autofillHints="@string/no_such_keyword"
-                    style="@style/TagGroup" />
+                    style="@style/TagGroup.Small" />
 
             </LinearLayout>
         </ScrollView>

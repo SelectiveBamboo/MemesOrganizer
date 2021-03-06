@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface KeywordDAO {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertKeywords(Keyword... keywords);
 
     @Delete

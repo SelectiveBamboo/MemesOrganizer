@@ -21,6 +21,20 @@ public class StringArrayTools {
     }
 
     /**
+     * Removes the all occurences of all strings in strArrayToRemove from strArray and returns the corresponding String Array
+     * @param strArray The array from which remove strings
+     * @param strArrayToremove an array of the strings to remove
+     */
+    public static String[] removeStrArrayFromStrArray(String[] strArray, String[] strArrayToremove)
+    {
+        ArrayList<String> toReturn = new ArrayList<String>();
+        toReturn.addAll(Arrays.asList(strArray));
+        toReturn.removeAll(Arrays.asList(strArrayToremove));
+
+        return  Arrays.copyOf(toReturn.toArray(), toReturn.toArray().length, String[].class);
+    }
+
+    /**
      * Join all elements of the stringArray into  single String, with a specified delimiter between array's elements
      * Use this instead of String.join() because of the minimum API required (26 for String.join())
      * @param stringArray
