@@ -62,15 +62,27 @@
                         android:textStyle="bold"
                         android:layout_marginLeft="10dp" />
 
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/no_search_selection_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="15dp"
+                        android:layout_marginLeft="35dp"
+                        android:text="@string/no_search_selection"/>
+
                     <me.gujun.android.taggroup.TagGroup
                         android:contentDescription="@string/search_selection"
                         android:autofillHints="@string/no_search_selection"
-                        android:minHeight="15dp"
+                        android:minHeight="30dp"
                         android:id="@+id/tag_group_selection"
-                        style="@style/TagGroup.Beauty_Red.Inverse" />
+                        style="@style/TagGroup.Beauty_Red.Inverse">
+                    </me.gujun.android.taggroup.TagGroup>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/launch_search_button"
+                        style="@style/Widget.AppCompat.ButtonBar"
+                        android:backgroundTint="@color/orange"
                         android:layout_margin="10dp"
                         android:src="@drawable/ic_search"
                         android:paddingHorizontal="8dp"
@@ -97,7 +109,7 @@
                     android:paddingTop="15dp"
                     android:id="@+id/tag_group_suggestion"
                     android:autofillHints="@string/no_such_keyword"
-                    style="@style/TagGroup.Small" />
+                    style="@style/TagGroup"/>
 
             </LinearLayout>
         </ScrollView>

@@ -15,7 +15,13 @@ public class StringArrayTools {
     {
         ArrayList<String> toReturn = new ArrayList<String>();
         toReturn.addAll(Arrays.asList(strArray));
-        toReturn.remove(strToremove);
+
+
+
+        for ( int i = 0;  i < toReturn.size(); i++) {
+            if(toReturn.get(i).equals(strToremove))
+                toReturn.remove(i);
+        }
 
         return  Arrays.copyOf(toReturn.toArray(), toReturn.toArray().length, String[].class);
     }

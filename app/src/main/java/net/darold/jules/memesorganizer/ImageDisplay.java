@@ -41,7 +41,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     ArrayList<pictureFacer> allpictures;
     ProgressBar load;
     String folderPath;
-    TextView folderName;
+    TextView noSearchTextView;
     pictureBrowserFragment browser;
     String TAG = "Image Display Activity";
 
@@ -69,6 +69,8 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
 
         //searchView = findViewById(R.id.searchView_ImagesKeywords);
         scrollview_Search = findViewById(R.id.scrollView_search_imageDisplayActivity);
+
+        noSearchTextView = findViewById(R.id.no_search_selection_textView);
 
 //        fabSearch = findViewById(R.id.fab_search);
 //        fabSearch.setOnClickListener(new View.OnClickListener() {
@@ -134,9 +136,6 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     private void handleSearchView(Menu menu) {
 
         searchItem = menu.getItem(0);
-        searchItem.collapseActionView();
-        searchItem.expandActionView();
-        searchItem.collapseActionView();
 
         allKeywords = Keyword.getStrArrayFromKwrdsList(imgRepo.getAllKeywords());
 
@@ -149,11 +148,13 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
             @Override
             public void onTagClick(String tag) {
                 String[] newTagsApplying = StringArrayTools.addStringToStrArray(taggroup_selection.getTags(), tag);
-                taggroup_selection.setTags(newTagsApplying);
 
-                String[] newTagsInSuggestion = StringArrayTools.removeStringFromStrArray(allKeywords, tag);
                 allKeywords = StringArrayTools.removeStringFromStrArray(allKeywords, tag);
-                taggroup_suggestion.setTags(newTagsInSuggestion);
+
+                taggroup_selection.setTags(newTagsApplying);
+                taggroup_suggestion.setTags(allKeywords);
+
+                noSearchTextView.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -161,11 +162,14 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
             @Override
             public void onTagClick(String tag) {
                 allKeywords = StringArrayTools.addStringToStrArray(allKeywords, tag);
-                String[] newTagsInSuggestion = StringArrayTools.addStringToStrArray(taggroup_suggestion.getTags(), tag);
-                taggroup_suggestion.setTags(newTagsInSuggestion);
 
-                String[] newTagsInSelection = StringArrayTools.removeStringFromStrArray(allKeywords, tag);
+                String[] newTagsInSelection = StringArrayTools.removeStringFromStrArray(taggroup_selection.getTags(), tag);
+
                 taggroup_selection.setTags(newTagsInSelection);
+                taggroup_suggestion.setTags(allKeywords);
+
+                if (newTagsInSelection.length < 1)
+                    noSearchTextView.setVisibility(View.VISIBLE);
             }
         });
 
@@ -373,7 +377,11 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
      */
     public void addKeywordsFromBrowserFragment(MenuItem menuItem)
     {
-        Log.d(TAG, "Add keywords button pressed");
         browser.launchAddKeywordsFragment();
+    }
+
+    public void sharePicture(MenuItem menuItem)
+    {
+        browser.sharePicture();
     }
 }

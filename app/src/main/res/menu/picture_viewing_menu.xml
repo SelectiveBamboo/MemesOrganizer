@@ -8,4 +8,10 @@
         app:showAsAction="ifRoom"
         android:onClick="addKeywordsFromBrowserFragment"></item>
 
+    <item android:id="@+id/share_pic"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share_picture"
+        app:showAsAction="ifRoom"
+        android:onClick="sharePicture"></item>
+
 </menu>

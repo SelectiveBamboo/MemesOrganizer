@@ -3,6 +3,8 @@ package net.darold.jules.memesorganizer;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +32,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import static androidx.core.view.ViewCompat.setTransitionName;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -321,8 +325,24 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                     .commit();
 
         }
-
     }
+
+
+    public void sharePicture()
+    {
+
+        Uri imageUri = FileProvider.getUriForFile(
+                getContext(),
+                "net.darold.jules.memesorganizer.provider",
+                new File(allImages.get(currentPosition).getPicturePath()));
+        //Uri fileUri = Uri.fromFile(new File(allImages.get(currentPosition).getPicturePath()));
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        intent.setType("image/*");
+        startActivity(Intent.createChooser(intent, "Share Image:"));
+    }
+
 
     /**
      * function for controlling the visibility of the recyclerView indicator
