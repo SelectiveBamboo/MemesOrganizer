@@ -5,7 +5,7 @@
     <string name="empty">No Images on this device</string>
     <string name="add_keywords_pic">Add keywords</string>
 
-    <string name="photos_name">Photos</string>
+    <string name="albums_name">Albums</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Search image by keywords</string>
@@ -16,5 +16,10 @@
     <string name="search_selection">"Keywords Selection :"</string>
     <string name="no_search_selection">No keywords currently selected</string>
     <string name="share_picture">share picture</string>
+    <string name="sharedPrefs">prefs</string>
+    <string name="sortByNameAsc">sort by name ASC</string>
+    <string name="sortByNameDesc">sort by name DESC</string>
+    <string name="sortByDateAsc">sort by date ASC</string>
+    <string name="sortByDateDesc">sort by date DESC</string>
 
 </resources>

@@ -165,6 +165,10 @@
         app:backgroundTint="@color/colorAccent"
         android:contentDescription="Search for images on their keywords" />-->
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container_image_display"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ProgressBar
         android:id="@+id/loader"

@@ -100,6 +100,8 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         return view;
     }
 
+
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -323,7 +325,6 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                     .add(R.id.fragment_container_picture_browser, addKeywordsFragment.class, bundle)
                     .addToBackStack(null)
                     .commit();
-
         }
     }
 

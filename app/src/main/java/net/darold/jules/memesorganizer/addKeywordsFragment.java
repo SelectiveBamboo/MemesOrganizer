@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,8 +71,6 @@ public class addKeywordsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
- //       getActivity().findViewById(R.id.searchView_ImagesKeywords).setVisibility(View.INVISIBLE);
-
         if (getArguments() != null) {
             pictureName = getArguments().getString(ARG_PARAM_NAME);
             picturePath = getArguments().getString(ARG_PARAM_PATH);
@@ -80,8 +79,8 @@ public class addKeywordsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         View view = inflater.inflate(R.layout.fragment_add_keywords, container, false);
         setHasOptionsMenu(true);
 
@@ -89,8 +88,10 @@ public class addKeywordsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
         super.onViewCreated(view, savedInstanceState);
+        Log.e("UUUUUUUUUUUUUUUUUUUUUU", "OOOOOOOOOO");
         setHasOptionsMenu(true);
 
         FloatingActionButton fab = view.findViewById(R.id.fab_confirm_AddKeywords);
@@ -206,6 +207,6 @@ public class addKeywordsFragment extends Fragment {
         imgRepo.updateImageWithKeywords(currentImage.getImageId(), keywordsAsStrList);
 
         pictureBrowserFragment.hasAddKeywordBtnBeenClicked = false;
-        getParentFragmentManager().beginTransaction().remove(this).commit();
+        getParentFragmentManager().popBackStackImmediate();
     }
 }

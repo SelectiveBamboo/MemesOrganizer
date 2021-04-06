@@ -1,7 +1,9 @@
 package net.darold.jules.memesorganizer;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +11,7 @@ import androidx.transition.Fade;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,12 +19,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 /**
  * Author CodeBoy722
@@ -31,8 +38,14 @@ import java.util.ArrayList;
  */
 public class MainActivity extends AppCompatActivity implements itemClickListener {
 
-    RecyclerView folderRecycler;
-    TextView empty;
+    private RecyclerView folderRecycler;
+    private TextView empty;
+    private Toolbar toolbar;
+
+
+    SharedPreferences sharedPref;
+    static final String ORDERBY = "orderBy";
+
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     /**
@@ -61,10 +74,31 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
         empty = findViewById(R.id.empty);
 
+        toolbar = findViewById(R.id.mainToolbar);
+        setSupportActionBar(toolbar);
+
         folderRecycler = findViewById(R.id.folderRecycler);
         folderRecycler.addItemDecoration(new MarginDecoration(this));
         folderRecycler.hasFixedSize();
-        ArrayList<imageFolder> folds = getPicturePaths();
+
+        sharedPref = getSharedPreferences(getString(R.string.sharedPrefs), MODE_PRIVATE);
+
+        String orderBy = sharedPref.getString(ORDERBY, null);
+        setAdapterFolders(orderBy); //populate the view with folders containing pictures
+
+        changeStatusBarColor();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+
+        return true;
+    }
+
+    private void setAdapterFolders(String orderBy) {
+        ArrayList<imageFolder> folds = getPicturePaths(orderBy);
 
         if(folds.isEmpty()){
             empty.setVisibility(View.VISIBLE);
@@ -72,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
             RecyclerView.Adapter folderAdapter = new pictureFolderAdapter(folds,MainActivity.this,this);
             folderRecycler.setAdapter(folderAdapter);
         }
-
-        changeStatusBarColor();
     }
 
     /**1
@@ -81,13 +113,13 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
      * gets all folders with pictures on the device and loads each of them in a custom object imageFolder
      * the returns an ArrayList of these custom objects
      */
-    private ArrayList<imageFolder> getPicturePaths(){
+    private ArrayList<imageFolder> getPicturePaths(String orderBy){
         ArrayList<imageFolder> picFolders = new ArrayList<>();
         ArrayList<String> picPaths = new ArrayList<>();
         Uri allImagesuri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.Media.BUCKET_ID};
-        Cursor cursor = this.getContentResolver().query(allImagesuri, projection, null, null, null);
+        Cursor cursor = this.getContentResolver().query(allImagesuri, projection, null, null, orderBy);
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -169,8 +201,31 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         Window window = this.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.black));
+        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.orange));
+    }
 
+    public void sortByNameAsc(MenuItem menuItem) {
+        String orderQuery = MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME + " ASC";
+        setAdapterFolders(orderQuery);
+        sharedPref.edit().putString(ORDERBY,orderQuery).commit();
+    }
+
+    public void sortByNameDesc(MenuItem menuItem) {
+        String orderQuery = MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME + " DESC";
+        setAdapterFolders(orderQuery);
+        sharedPref.edit().putString(ORDERBY,orderQuery).commit();
+    }
+
+    public void sortByDateAsc(MenuItem menuItem) {
+        String orderQuery = MediaStore.Images.ImageColumns.DATE_ADDED + " ASC";
+        setAdapterFolders(orderQuery);
+        sharedPref.edit().putString(ORDERBY,orderQuery).commit();
+    }
+
+    public void sortByDateDesc(MenuItem menuItem) {
+        String orderQuery = MediaStore.Images.ImageColumns.DATE_ADDED + " DESC";
+        setAdapterFolders(orderQuery);
+        sharedPref.edit().putString(ORDERBY,orderQuery).commit();
     }
 
 }

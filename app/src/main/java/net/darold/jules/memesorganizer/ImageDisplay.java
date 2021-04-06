@@ -10,19 +10,26 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Fade;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +48,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     ArrayList<pictureFacer> allpictures;
     ProgressBar load;
     String folderPath;
+    String folderName;
     TextView noSearchTextView;
     pictureBrowserFragment browser;
     String TAG = "Image Display Activity";
@@ -72,27 +80,27 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
 
         noSearchTextView = findViewById(R.id.no_search_selection_textView);
 
-//        fabSearch = findViewById(R.id.fab_search);
-//        fabSearch.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onSearchRequested();
-//            }
-//        });
-
-
         setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
-        toolbar = (Toolbar) findViewById(R.id.imageDisplayToolbar);
+        toolbar = findViewById(R.id.imageDisplayToolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         allpictures = new ArrayList<>(0);
         imageRecycler.addItemDecoration(new MarginDecoration(this));
         imageRecycler.hasFixedSize();
         load = findViewById(R.id.loader);
 
-        // Get the intent, verify the action and get the query
+        // Get the intent, verify the action and get extras
         Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
         if (Intent.ACTION_SEARCH.equals(intent.getAction()))
         {
             String query = intent.getStringExtra("query");
@@ -118,10 +126,24 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
             imageRecycler.setAdapter(new picture_Adapter(allpictures,ImageDisplay.this,this));
             load.setVisibility(View.GONE);
         }
+        else if (Intent.ACTION_SEND.equals(action) && type != null)
+        {
+            if (type.startsWith("image/"))
+            {
+                Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (imageUri != null) {
+                    handleSendImage(imageUri);
+                }
+            }
+        }
         else
         {
-            getSupportActionBar().setTitle(getIntent().getStringExtra("folderName"));
-            folderPath =  getIntent().getStringExtra("folderPath");
+            if (folderPath == null)
+                folderPath =  getIntent().getStringExtra("folderPath");
+            if (folderName == null)
+                folderName =  getIntent().getStringExtra("folderName");
+
+            getSupportActionBar().setTitle(folderName);
 
             if(allpictures.isEmpty())
             {
@@ -130,6 +152,53 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
                 imageRecycler.setAdapter(new picture_Adapter(allpictures,ImageDisplay.this,this));
                 load.setVisibility(View.GONE);
             }
+        }
+
+        changeStatusBarColor();
+    }
+
+    private void handleSendImage(Uri imageUri)
+    {
+        String picturePath = imageUri.getPath().substring(6);
+        try{
+            int lastPartIndex = picturePath.lastIndexOf("/");
+
+            if (picturePath.length() > 0 && lastPartIndex != -1) {
+                Bundle bundle = new Bundle();
+                bundle.putString("picturePath", picturePath);
+                bundle.putString("imageURI", imageUri.toString());
+                bundle.putString("pictureName", picturePath.substring(lastPartIndex));
+
+                folderPath = picturePath.substring(0, lastPartIndex);
+                Toast.makeText(getApplicationContext(), folderPath, Toast.LENGTH_LONG).show();
+
+                int position = 0;
+                ArrayList<pictureFacer> pics = getAllImagesByFolder(folderPath);
+
+                while (pics.get(position).getPicturePath() != picturePath) {
+                    Log.d(TAG, "handleSendImage: picturePath expected: " + pics.get(position).getPicturePath());
+                    position++;
+                    if (position >= pics.size())
+                        throw new Exception(picturePath);
+                }
+
+                browser = pictureBrowserFragment.newInstance(pics, position, ImageDisplay.this);
+
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .add(R.id.fragment_container_image_display, browser)
+                        .add(R.id.fragment_container_image_display, addKeywordsFragment.class, bundle)
+                        .addToBackStack(null)
+                        .commit();
+            } else
+                throw new Exception("");
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Null path \n error with the sent intent", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "handleSendImage: " + "picturePath = " + picturePath);
+            Log.e(TAG, "handleSendImage: " + "imageURI = " + imageUri.toString());
+            Log.e(TAG, "handleSendImage: " + "folderPath = " + folderPath );
+            finish();
         }
     }
 
@@ -251,6 +320,31 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         return strBuffer.toString();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void changeStatusBarColor()
+    {
+        Window window = this.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.orange));
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getSupportFragmentManager().popBackStackImmediate();
+            if (pictureBrowserFragment.hasAddKeywordBtnBeenClicked == true)
+                pictureBrowserFragment.hasAddKeywordBtnBeenClicked = false;
+        }
+
+    }
+
     /**
      *
      * @param holder The ViewHolder for the clicked picture
@@ -292,22 +386,9 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if(id == R.id.search_ImagesKeywords) {
-//            Toast.makeText(getApplicationContext(), "Search", Toast.LENGTH_LONG).show();
-//            onSearchRequested();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
 
     @Override
-    public void onPicClicked(String pictureFolderPath,String folderName) {
-
-    }
+    public void onPicClicked(String pictureFolderPath,String folderName) { }
 
     /**
      * This Method gets all the images in the folder paths passed as a String to the method and returns
