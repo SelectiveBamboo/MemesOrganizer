@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.transition.Fade;
 
 import android.Manifest;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     private RecyclerView folderRecycler;
     private TextView empty;
     private Toolbar toolbar;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     SharedPreferences sharedPref;
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         //____________________________________________________________________________________
 
         empty = findViewById(R.id.empty);
+        swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 
         toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
@@ -83,8 +86,16 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
         sharedPref = getSharedPreferences(getString(R.string.sharedPrefs), MODE_PRIVATE);
 
-        String orderBy = sharedPref.getString(ORDERBY, null);
-        setAdapterFolders(orderBy); //populate the view with folders containing pictures
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        setAdapterFolders();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+
+        setAdapterFolders(); //populate the view with folders containing pictures
 
         changeStatusBarColor();
     }
@@ -97,7 +108,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         return true;
     }
 
-    private void setAdapterFolders(String orderBy) {
+    private void setAdapterFolders() {
+        String orderBy = sharedPref.getString(ORDERBY, null);
         ArrayList<imageFolder> folds = getPicturePaths(orderBy);
 
         if(folds.isEmpty()){
@@ -206,26 +218,33 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
     public void sortByNameAsc(MenuItem menuItem) {
         String orderQuery = MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME + " ASC";
-        setAdapterFolders(orderQuery);
         sharedPref.edit().putString(ORDERBY,orderQuery).commit();
+        setAdapterFolders();
     }
 
     public void sortByNameDesc(MenuItem menuItem) {
         String orderQuery = MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME + " DESC";
-        setAdapterFolders(orderQuery);
         sharedPref.edit().putString(ORDERBY,orderQuery).commit();
+        setAdapterFolders();
     }
 
     public void sortByDateAsc(MenuItem menuItem) {
         String orderQuery = MediaStore.Images.ImageColumns.DATE_ADDED + " ASC";
-        setAdapterFolders(orderQuery);
         sharedPref.edit().putString(ORDERBY,orderQuery).commit();
+        setAdapterFolders();
+
     }
 
     public void sortByDateDesc(MenuItem menuItem) {
         String orderQuery = MediaStore.Images.ImageColumns.DATE_ADDED + " DESC";
-        setAdapterFolders(orderQuery);
         sharedPref.edit().putString(ORDERBY,orderQuery).commit();
+        setAdapterFolders();
+    }
+
+    public void refresh(MenuItem menuItem) {
+        swipeRefreshLayout.setRefreshing(true);
+        setAdapterFolders();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
 }

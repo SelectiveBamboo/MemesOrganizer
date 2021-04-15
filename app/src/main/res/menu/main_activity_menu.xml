@@ -5,21 +5,27 @@
     <item android:id="@+id/sortByNameAsc"
         android:title="@string/sortByNameAsc"
         app:showAsAction="never"
-        android:onClick="sortByNameAsc"></item>
+        android:onClick="sortByNameAsc"/>
 
     <item android:id="@+id/sortByNameDesc"
         android:title="@string/sortByNameDesc"
         app:showAsAction="never"
-        android:onClick="sortByNameDesc"></item>
+        android:onClick="sortByNameDesc"/>
 
     <item android:id="@+id/sortByDateAsc"
         android:title="@string/sortByDateAsc"
         app:showAsAction="never"
-        android:onClick="sortByDateAsc"></item>
+        android:onClick="sortByDateAsc"/>
 
     <item android:id="@+id/sortByDateDesc"
         android:title="@string/sortByDateDesc"
         app:showAsAction="never"
-        android:onClick="sortByDateDesc"></item>
+        android:onClick="sortByDateDesc"/>
+
+    <item
+        android:id="@+id/menu_refresh"
+        app:showAsAction="ifRoom"
+        android:onClick="refresh"
+        android:title="Refresh" />
 
 </menu>
