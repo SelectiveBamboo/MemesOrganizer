@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         //____________________________________________________________________________________
 
         empty = findViewById(R.id.empty);
-        swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
+       swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 
         toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         }
     }
 
-    /**1
+    /**
      * @return
      * gets all folders with pictures on the device and loads each of them in a custom object imageFolder
      * the returns an ArrayList of these custom objects
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
             e.printStackTrace();
         }
         for(int i = 0;i < picFolders.size();i++){
-            Log.d("picture folders",picFolders.get(i).getFolderName()+" and path = "+picFolders.get(i).getPath()+" nmber of pics ="+picFolders.get(i).getNumberOfPics());
+            Log.d("picture folders",picFolders.get(i).getFolderName()+" and path = "+picFolders.get(i).getPath()+" number of pics ="+picFolders.get(i).getNumberOfPics());
         }
 
         //reverse order ArrayList
@@ -248,18 +248,3 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     }
 
 }
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.imagegallery);
-//        recyclerView.setHasFixedSize(true);
-//
-//        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),2);
-//        recyclerView.setLayoutManager(layoutManager);
-//        ArrayList<CreateList> createLists = prepareData();
-//        MyAdapter adapter = new MyAdapter(getApplicationContext(), createLists);
-//        recyclerView.setAdapter(adapter);
-//    }

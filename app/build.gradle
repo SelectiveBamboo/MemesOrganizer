@@ -45,11 +45,19 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'me.gujun.android.taggroup:library:1.4@aar'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation "androidx.fragment:fragment:$fragment_version"
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    implementation ("com.github.bumptech.glide:glide:4.9.0") {
+        exclude group: "com.android.support"
+    }
+    annotationProcessor 'androidx.annotation:annotation:1.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation ("com.github.bumptech.glide:glide:4.9.0@aar") {
+        transitive = true
+    }
 
 
     implementation 'androidx.appcompat:appcompat:1.2.0'

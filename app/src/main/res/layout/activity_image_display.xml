@@ -34,7 +34,7 @@
             android:layout_below="@id/imageDisplayToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent_lightgrey"
+            android:background="@color/transparent_lightGray"
             android:visibility="invisible"
             android:id="@+id/scrollView_search_imageDisplayActivity">
 

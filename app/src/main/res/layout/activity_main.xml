@@ -5,14 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
     tools:context=".MainActivity">
-
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/black">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/mainToolbar"
@@ -20,44 +18,32 @@
             android:layout_height="50dp"
             android:layout_gravity="top"
             android:background="@android:color/holo_orange_dark"
-            android:foregroundGravity="top"
             app:titleTextColor="@color/white" />
 
-
-<!--                <androidx.cardview.widget.CardView-->
-<!--                    android:id="@+id/head"-->
-<!--                    android:layout_marginTop="50dp"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="100dp"-->
-<!--                    app:cardBackgroundColor="@color/white"-->
-<!--                    android:background="@color/white">-->
-
-<!--                </androidx.cardview.widget.CardView>-->
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-
             android:id="@+id/swipeToRefresh"
-            android:layout_above="@id/mainToolbar"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/mainToolbar"
+            android:background="@color/white"
             android:orientation="vertical">
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:foregroundGravity="top"
                 android:orientation="vertical">
 
                 <net.darold.jules.memesorganizer.AutoFitRecyclerView
                     android:id="@+id/folderRecycler"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@+id/mainToolbar"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:background="@color/white"
                     android:clipToPadding="false"
                     android:columnWidth="@dimen/folder_column_width">
 
-                <!--app:fastScrollEnabled="true"
+                    <!--app:fastScrollEnabled="true"
            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
            app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
