@@ -84,11 +84,17 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
 
         toolbar = findViewById(R.id.imageDisplayToolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorContrast));
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                if (searchView.hasFocus())
+                {
+                    searchView.clearFocus(); //Trigger onFocusChange method, dealing with the expected behavior
+                }
+                else
+                    onBackPressed();
             }
         });
 
@@ -253,6 +259,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
             }
         });
 
+
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -264,7 +271,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
                 {
                     scrollview_Search.setVisibility(View.INVISIBLE);
                     imageRecycler.setVisibility(View.VISIBLE);
-                    searchItem.collapseActionView();
+                    searchView.onActionViewCollapsed();
                     searchView.setQuery("", false);
                 }
             }
@@ -304,7 +311,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         imageRecycler.setVisibility(View.VISIBLE);
 
         startActivity(intent);
-        //finish();
+        finish();
     }
 
     private String createSearchQuery(String[] elementsQuery) {
@@ -326,7 +333,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         Window window = this.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.orange));
+        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
 
     }
 

@@ -14,7 +14,7 @@
       android:layout_height="50dp"
       android:layout_gravity="top"
       android:foregroundGravity="top"
-      android:background="@android:color/holo_orange_dark"
+      android:background="@color/colorPrimary"
       android:id="@+id/pictureBrowserToolbar"/>
 
   <FrameLayout

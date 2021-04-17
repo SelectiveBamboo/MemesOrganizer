@@ -91,7 +91,6 @@ public class addKeywordsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        Log.e("UUUUUUUUUUUUUUUUUUUUUU", "OOOOOOOOOO");
         setHasOptionsMenu(true);
 
         FloatingActionButton fab = view.findViewById(R.id.fab_confirm_AddKeywords);

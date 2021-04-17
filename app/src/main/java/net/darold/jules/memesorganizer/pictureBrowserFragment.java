@@ -319,7 +319,6 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             hasAddKeywordBtnBeenClicked = true;
 
-            Toast.makeText(ctxt, String.valueOf(currentPosition), Toast.LENGTH_SHORT).show();
             getParentFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_container_picture_browser, addKeywordsFragment.class, bundle)

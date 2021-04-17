@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="auto_fit"
+        android:layout_marginTop="5dp"
         android:horizontalSpacing="6dp"
         android:verticalSpacing="6dp"
         tools:context=".addKeywordsFragment"
@@ -24,8 +25,7 @@
         <me.gujun.android.taggroup.TagGroup
             android:id="@+id/tag_group_applying"
             app:atg_isAppendMode="true"
-            style="@style/TagGroup.Beauty_Red.Inverse" />
-
+            style="@style/TagGroup.Beauty.Inverse" />
 
         <me.gujun.android.taggroup.TagGroup
             android:paddingTop="15dp"
@@ -42,8 +42,6 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
         android:src="@drawable/ic_confirm"
-        android:background="@color/colorAccent"
-        app:backgroundTint="@color/colorAccent"
         android:onClick="confirmAddKeywords"
         android:contentDescription="confirm adding these keywords" />
 

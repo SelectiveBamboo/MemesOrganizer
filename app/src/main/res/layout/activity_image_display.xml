@@ -17,7 +17,7 @@
             android:layout_gravity="top"
             android:foregroundGravity="top"
             app:titleTextColor="@color/white"
-            android:background="@android:color/holo_orange_dark"
+            android:background="@color/colorPrimary"
             android:id="@+id/imageDisplayToolbar">
 
 <!--            <SearchView-->
@@ -76,21 +76,20 @@
                         android:autofillHints="@string/no_search_selection"
                         android:minHeight="30dp"
                         android:id="@+id/tag_group_selection"
-                        style="@style/TagGroup.Beauty_Red.Inverse">
+                        style="@style/TagGroup.Beauty.Inverse">
                     </me.gujun.android.taggroup.TagGroup>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/launch_search_button"
                         style="@style/Widget.AppCompat.ButtonBar"
-                        android:backgroundTint="@color/orange"
                         android:layout_margin="10dp"
                         android:src="@drawable/ic_search"
                         android:paddingHorizontal="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:foregroundGravity="top"
-                        android:textColor="@color/white"
-                        android:background="@color/colorAccent"
+                        android:textColor="@color/colorContrast"
+                        android:background="@color/red_material"
                         android:onClick="launchSearch"
                         android:text="@string/launch_search" />
                 </LinearLayout>

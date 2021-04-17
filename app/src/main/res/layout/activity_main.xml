@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="top"
-            android:background="@android:color/holo_orange_dark"
+            android:background="@color/colorPrimary"
             app:titleTextColor="@color/white" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

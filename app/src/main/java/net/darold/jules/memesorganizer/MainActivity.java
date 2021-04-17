@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
         toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorContrast));
 
         folderRecycler = findViewById(R.id.folderRecycler);
         folderRecycler.addItemDecoration(new MarginDecoration(this));
