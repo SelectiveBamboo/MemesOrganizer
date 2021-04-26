@@ -49,22 +49,12 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     ProgressBar load;
     String folderPath;
     String folderName;
-    TextView noSearchTextView;
     pictureBrowserFragment browser;
     String TAG = "Image Display Activity";
-
-    FloatingActionButton fabSearch;
-    SearchView searchView;
-    ScrollView scrollview_Search;
-    TagGroup taggroup_suggestion;
-    TagGroup taggroup_selection;
-
-    String[] allKeywords;
 
     ImageRepository imgRepo;
 
     private Toolbar toolbar;
-    private MenuItem searchItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +65,6 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
 
         imageRecycler = findViewById(R.id.recycler);
 
-        //searchView = findViewById(R.id.searchView_ImagesKeywords);
-        scrollview_Search = findViewById(R.id.scrollView_search_imageDisplayActivity);
-
-        noSearchTextView = findViewById(R.id.no_search_selection_textView);
-
         setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
         toolbar = findViewById(R.id.imageDisplayToolbar);
@@ -89,14 +74,10 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchView.hasFocus())
-                {
-                    searchView.clearFocus(); //Trigger onFocusChange method, dealing with the expected behavior
-                }
-                else
-                    onBackPressed();
+                onBackPressed();
             }
         });
+
 
         allpictures = new ArrayList<>(0);
         imageRecycler.addItemDecoration(new MarginDecoration(this));
@@ -121,9 +102,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
                 @Override
                 public void onClick(View v)
                 {
-                    Intent goBackIntent = new Intent(getApplicationContext(), ImageDisplay.class);
-                    goBackIntent.putExtra("folderPath", intent.getStringExtra("folderPath"));
-                    goBackIntent.putExtra("folderName", intent.getStringExtra("folderName") );
+                    Intent goBackIntent = new Intent(getApplicationContext(), MainActivity.class);;
                     startActivity(goBackIntent);
                     finish();
                 }
@@ -159,8 +138,6 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
                 load.setVisibility(View.GONE);
             }
         }
-
-        changeStatusBarColor();
     }
 
     private void handleSendImage(Uri imageUri)
@@ -208,134 +185,6 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         }
     }
 
-    private void handleSearchView(Menu menu) {
-
-        searchItem = menu.getItem(0);
-
-        allKeywords = Keyword.getStrArrayFromKwrdsList(imgRepo.getAllKeywords());
-
-        taggroup_selection = findViewById(R.id.tag_group_selection);
-        taggroup_suggestion = findViewById(R.id.tag_group_suggestion);
-
-
-        taggroup_suggestion.setTags(allKeywords);
-        taggroup_suggestion.setOnTagClickListener(new TagGroup.OnTagClickListener() {
-            @Override
-            public void onTagClick(String tag) {
-                String[] newTagsApplying = StringArrayTools.addStringToStrArray(taggroup_selection.getTags(), tag);
-
-                allKeywords = StringArrayTools.removeStringFromStrArray(allKeywords, tag);
-
-                taggroup_selection.setTags(newTagsApplying);
-                taggroup_suggestion.setTags(allKeywords);
-
-                noSearchTextView.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        taggroup_selection.setOnTagClickListener(new TagGroup.OnTagClickListener() {
-            @Override
-            public void onTagClick(String tag) {
-                allKeywords = StringArrayTools.addStringToStrArray(allKeywords, tag);
-
-                String[] newTagsInSelection = StringArrayTools.removeStringFromStrArray(taggroup_selection.getTags(), tag);
-
-                taggroup_selection.setTags(newTagsInSelection);
-                taggroup_suggestion.setTags(allKeywords);
-
-                if (newTagsInSelection.length < 1)
-                    noSearchTextView.setVisibility(View.VISIBLE);
-            }
-        });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                searchView.clearFocus();
-                scrollview_Search.setVisibility(View.INVISIBLE);
-                imageRecycler.setVisibility(View.VISIBLE);
-
-                return false;
-            }
-        });
-
-
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    scrollview_Search.setVisibility(View.VISIBLE);
-                    imageRecycler.setVisibility(View.INVISIBLE);
-                }
-                else
-                {
-                    scrollview_Search.setVisibility(View.INVISIBLE);
-                    imageRecycler.setVisibility(View.VISIBLE);
-                    searchView.onActionViewCollapsed();
-                    searchView.setQuery("", false);
-                }
-            }
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                String[] matchingArray = StringArrayTools.getStrArrayContainingStr(allKeywords, newText);
-                taggroup_suggestion.setTags(matchingArray);
-                return false;
-            }
-        });
-    }
-
-    public void launchSearch(View view){
-        String[] tagSelected = taggroup_selection.getTags();
-
-
-        String searchQuery;
-        if (tagSelected.length>0)
-            searchQuery = createSearchQuery(tagSelected);
-        else
-           searchQuery = "";
-
-        Intent intent = new Intent(this, ImageDisplay.class);
-        intent.putExtra("query", searchQuery);
-        intent.putExtra("folderName", toolbar.getTitle());
-        intent.putExtra("folderPath", folderPath);
-        intent.setAction(Intent.ACTION_SEARCH);
-
-        searchView.setVisibility(View.INVISIBLE);
-        imageRecycler.setVisibility(View.VISIBLE);
-
-        startActivity(intent);
-        finish();
-    }
-
-    private String createSearchQuery(String[] elementsQuery) {
-        StringBuffer strBuffer = new StringBuffer();
-
-        if (elementsQuery.length > 0) {
-            strBuffer.append(elementsQuery[0]);
-            for (int i = 1; i < elementsQuery.length; i++) {
-                strBuffer.append(' ');
-                strBuffer.append(elementsQuery[i]);
-            }
-        }
-        return strBuffer.toString();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void changeStatusBarColor()
-    {
-        Window window = this.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
-
-    }
 
     @Override
     public void onBackPressed() {
@@ -381,17 +230,6 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
                 .commit();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.image_display_menu, menu);
-
-        MenuItem searchViewItem = menu.findItem(R.id.search_ImagesKeywords);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
-
-        handleSearchView(menu);
-        return true;
-    }
 
 
     @Override

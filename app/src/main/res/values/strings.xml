@@ -23,4 +23,7 @@
     <string name="sortByNameDesc">Sort by name DESC</string>
     <string name="sortByDateAsc">Sort by date ASC</string>
     <string name="sortByDateDesc">Sort by date DESC</string>
+    <string name="confirm_addKeywords">confirm adding these keywords</string>
+    <string name="confirm_keywordManagement">confirm the keywords management</string>
+    <string name="startKeywordsManagementActivity">Manage Keywords</string>
 </resources>

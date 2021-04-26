@@ -43,6 +43,6 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_confirm"
         android:onClick="confirmAddKeywords"
-        android:contentDescription="confirm adding these keywords" />
+        android:contentDescription="@string/confirm_addKeywords" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

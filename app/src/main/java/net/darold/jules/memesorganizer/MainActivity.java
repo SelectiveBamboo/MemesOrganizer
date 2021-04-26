@@ -1,14 +1,15 @@
 package net.darold.jules.memesorganizer;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.transition.Fade;
 
 import android.Manifest;
 import android.content.Intent;
@@ -21,15 +22,17 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
+
+import me.gujun.android.taggroup.TagGroup;
 
 /**
  * Author CodeBoy722
@@ -43,6 +46,19 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     private TextView empty;
     private Toolbar toolbar;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    private SearchView searchView;
+    private ScrollView scrollview_Search;
+    private MenuItem searchItem;
+    private TextView noSearchTextView;
+
+    private TagGroup taggroup_suggestion;
+    private TagGroup taggroup_selection;
+
+    private ImageRepository imgRepo;
+
+    String[] allKeywords;
+
 
 
     SharedPreferences sharedPref;
@@ -75,11 +91,16 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         //____________________________________________________________________________________
 
         empty = findViewById(R.id.empty);
-       swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
+        swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 
         toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorContrast));
+
+        scrollview_Search = findViewById(R.id.scrollView_search_mainActivity);
+        noSearchTextView = findViewById(R.id.no_search_selection_textView);
+
+        imgRepo = new ImageRepository(getApplicationContext());
 
         folderRecycler = findViewById(R.id.folderRecycler);
         folderRecycler.addItemDecoration(new MarginDecoration(this));
@@ -88,25 +109,26 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         sharedPref = getSharedPreferences(getString(R.string.sharedPrefs), MODE_PRIVATE);
 
         swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        setAdapterFolders();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
+                () -> {
+                    setAdapterFolders();
+                    swipeRefreshLayout.setRefreshing(false);
                 });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (searchView.hasFocus())
+                {
+                    searchView.clearFocus(); //Trigger onFocusChange method, dealing with the expected behavior
+                }
+                else
+                    onBackPressed();
+            }
+        });
 
         setAdapterFolders(); //populate the view with folders containing pictures
 
         changeStatusBarColor();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
-
-        return true;
     }
 
     private void setAdapterFolders() {
@@ -120,6 +142,126 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
             folderRecycler.setAdapter(folderAdapter);
         }
     }
+
+
+
+    private void handleSearchView(Menu menu) {
+
+        searchItem = menu.getItem(0);
+
+        allKeywords = Keyword.getStrArrayFromKwrdsList(imgRepo.getAllKeywords());
+
+        taggroup_selection = findViewById(R.id.tag_group_selection);
+        taggroup_suggestion = findViewById(R.id.tag_group_suggestion);
+
+
+        taggroup_suggestion.setTags(allKeywords);
+        taggroup_suggestion.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+            @Override
+            public void onTagClick(String tag) {
+                String[] newTagsApplying = StringArrayTools.addStringToStrArray(taggroup_selection.getTags(), tag);
+
+                allKeywords = StringArrayTools.removeStringFromStrArray(allKeywords, tag);
+
+                taggroup_selection.setTags(newTagsApplying);
+                taggroup_suggestion.setTags(allKeywords);
+
+                noSearchTextView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        taggroup_selection.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+            @Override
+            public void onTagClick(String tag) {
+                allKeywords = StringArrayTools.addStringToStrArray(allKeywords, tag);
+
+                String[] newTagsInSelection = StringArrayTools.removeStringFromStrArray(taggroup_selection.getTags(), tag);
+
+                taggroup_selection.setTags(newTagsInSelection);
+                taggroup_suggestion.setTags(allKeywords);
+
+                if (newTagsInSelection.length < 1)
+                    noSearchTextView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchView.clearFocus();
+                scrollview_Search.setVisibility(View.INVISIBLE);
+                swipeRefreshLayout.setVisibility(View.VISIBLE);
+
+                return false;
+            }
+        });
+
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    scrollview_Search.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setVisibility(View.INVISIBLE);
+                }
+                else
+                {
+                    scrollview_Search.setVisibility(View.INVISIBLE);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                    searchView.onActionViewCollapsed();
+                    searchView.setQuery("", false);
+                }
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                String[] matchingArray = StringArrayTools.getStrArrayContainingStr(allKeywords, newText);
+                taggroup_suggestion.setTags(matchingArray);
+                return false;
+            }
+        });
+    }
+
+    public void launchSearch(View view){
+        String[] tagSelected = taggroup_selection.getTags();
+
+
+        String searchQuery;
+        if (tagSelected.length>0)
+            searchQuery = createSearchQuery(tagSelected);
+        else
+            searchQuery = "";
+
+        Intent intent = new Intent(this, ImageDisplay.class);
+        intent.putExtra("query", searchQuery);
+        intent.setAction(Intent.ACTION_SEARCH);
+
+        searchView.setVisibility(View.INVISIBLE);
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
+
+        startActivity(intent);
+        finish();
+    }
+
+    private String createSearchQuery(String[] elementsQuery) {
+        StringBuffer strBuffer = new StringBuffer();
+
+        if (elementsQuery.length > 0) {
+            strBuffer.append(elementsQuery[0]);
+            for (int i = 1; i < elementsQuery.length; i++) {
+                strBuffer.append(' ');
+                strBuffer.append(elementsQuery[i]);
+            }
+        }
+        return strBuffer.toString();
+    }
+
 
     /**
      * @return
@@ -204,6 +346,18 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         startActivity(move);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+
+        MenuItem searchViewItem = menu.findItem(R.id.search_ImagesKeywords);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
+
+        handleSearchView(menu);
+        return true;
+    }
+
 
     /**
      * Default status bar height 24dp,with code API level 24
@@ -214,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         Window window = this.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.orange));
+        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
     }
 
     public void sortByNameAsc(MenuItem menuItem) {
@@ -246,6 +400,11 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         swipeRefreshLayout.setRefreshing(true);
         setAdapterFolders();
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void startKeywordsManagementActivity(MenuItem menuItem) {
+        Intent move = new Intent(MainActivity.this,keywordManagementActivity.class);
+        startActivity(move);
     }
 
 }

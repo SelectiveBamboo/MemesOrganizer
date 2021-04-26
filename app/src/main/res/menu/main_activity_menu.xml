@@ -22,11 +22,22 @@
         app:showAsAction="never"
         android:onClick="sortByDateDesc"/>
 
-    <item
-        android:id="@+id/menu_refresh"
+    <item android:id="@+id/menu_refresh"
         app:showAsAction="ifRoom"
         android:onClick="refresh"
         android:icon="@drawable/ic_refresh"
         android:title="Refresh" />
+    
+    <item android:id="@+id/search_ImagesKeywords"
+        android:title="@string/search"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:icon="@drawable/ic_search" />
+
+    <item android:id="@+id/startKeywordsManagementActivity"
+        android:title="@string/startKeywordsManagementActivity"
+        app:showAsAction="never"
+        android:onClick="startKeywordsManagementActivity"/>
+
 
 </menu>

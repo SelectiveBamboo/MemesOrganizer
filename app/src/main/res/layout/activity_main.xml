@@ -23,34 +23,118 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeToRefresh"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@id/mainToolbar"
             android:background="@color/white"
             android:orientation="vertical">
 
-            <ScrollView
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView_Main"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:foregroundGravity="top"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:fillViewport="true">
 
                 <net.darold.jules.memesorganizer.AutoFitRecyclerView
                     android:id="@+id/folderRecycler"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
                     android:background="@color/white"
-                    android:clipToPadding="false"
                     android:columnWidth="@dimen/folder_column_width">
-
-                    <!--app:fastScrollEnabled="true"
-           app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
-           app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
-           app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
-           app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"-->
                 </net.darold.jules.memesorganizer.AutoFitRecyclerView>
-            </ScrollView>
+            </androidx.core.widget.NestedScrollView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+        <ScrollView
+            android:layout_below="@id/mainToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_lightGray"
+            android:visibility="invisible"
+            android:id="@+id/scrollView_search_mainActivity">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="auto_fit"
+                android:horizontalSpacing="6dp"
+                android:verticalSpacing="6dp"
+                tools:context=".addKeywordsFragment"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_marginTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_selection"
+                        android:textColor="@color/colorContrastDark"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="10dp" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/no_search_selection_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="15dp"
+                        android:textColor="@color/colorContrastDark"
+                        android:textStyle="italic"
+                        android:layout_marginLeft="35dp"
+                        android:text="@string/no_search_selection"/>
+
+                    <me.gujun.android.taggroup.TagGroup
+                        android:contentDescription="@string/search_selection"
+                        android:autofillHints="@string/no_search_selection"
+                        android:minHeight="50dp"
+                        android:id="@+id/tag_group_selection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TagGroup.Beauty.Inverse">
+                    </me.gujun.android.taggroup.TagGroup>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/launch_search_button"
+                        style="@style/Widget.AppCompat.ButtonBar"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_search"
+                        android:paddingHorizontal="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:foregroundGravity="top"
+                        android:textColor="@color/colorContrast"
+                        android:background="@color/red_material"
+                        android:onClick="launchSearch"
+                        android:text="@string/launch_search" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/search_suggestions"
+                    android:textColor="@color/colorContrastDark"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp" />
+
+                <me.gujun.android.taggroup.TagGroup
+                    android:contentDescription="@string/search_suggestions"
+                    android:paddingTop="15dp"
+                    android:id="@+id/tag_group_suggestion"
+                    android:autofillHints="@string/no_such_keyword"
+                    style="@style/TagGroup"/>
+
+            </LinearLayout>
+        </ScrollView>
+
     </RelativeLayout>
 
     <TextView
