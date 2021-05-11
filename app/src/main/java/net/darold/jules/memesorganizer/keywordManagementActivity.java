@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mikepenz.materialdrawer.Drawer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,15 +45,8 @@ public class keywordManagementActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.keywordManagementToolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setTitle(TAG);
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorContrast));
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
 
         imgRepo = new ImageRepository(getApplicationContext());
@@ -97,6 +91,10 @@ public class keywordManagementActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Drawer result = DrawerCreator.getDrawer(this, toolbar);
+        result.setSelection(DrawerCreator.KEYWORDS_MANAGEMENT_DRAWER_ID);
+
     }
 
     @Override

@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 
 import java.util.ArrayList;
 
@@ -129,6 +136,9 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         setAdapterFolders(); //populate the view with folders containing pictures
 
         changeStatusBarColor();
+
+        Drawer result = DrawerCreator.getDrawer(this, toolbar);
+        result.setSelection(DrawerCreator.MAIN_ACTIVITY_DRAWER_ID);
     }
 
     private void setAdapterFolders() {
@@ -358,6 +368,10 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     /**
      * Default status bar height 24dp,with code API level 24
