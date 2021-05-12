@@ -52,7 +52,7 @@
             android:layout_below="@id/mainToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent_lightGray"
+            android:background="@color/white"
             android:visibility="invisible"
             android:id="@+id/scrollView_search_mainActivity">
 
@@ -75,8 +75,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/search_selection"
-                        android:textColor="@color/colorContrastDark"
-                        android:textSize="10sp"
+                        android:textColor="@color/colorContrast"
+                        android:textSize="13sp"
                         android:textStyle="bold"
                         android:layout_marginLeft="10dp" />
 
@@ -86,6 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minHeight="15dp"
+                        android:outlineAmbientShadowColor="@color/black"
                         android:textColor="@color/colorContrastDark"
                         android:textStyle="italic"
                         android:layout_marginLeft="35dp"
@@ -110,8 +111,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:foregroundGravity="top"
-                        android:textColor="@color/colorContrast"
-                        android:background="@color/red_material"
+                        android:textColor="@color/white"
+                        android:background="@color/colorSecondary"
                         android:onClick="launchSearch"
                         android:text="@string/launch_search" />
                 </LinearLayout>
@@ -120,9 +121,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/search_suggestions"
-                    android:textColor="@color/colorContrastDark"
-                    android:textSize="10sp"
+                    android:textColor="@color/colorContrast"
+                    android:textSize="13sp"
                     android:textStyle="bold"
+                    android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp" />
 
                 <me.gujun.android.taggroup.TagGroup

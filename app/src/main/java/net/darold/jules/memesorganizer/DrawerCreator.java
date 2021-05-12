@@ -5,12 +5,16 @@ import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.ImageHolder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 public class DrawerCreator {
 
@@ -18,7 +22,22 @@ public class DrawerCreator {
     public static final int KEYWORDS_MANAGEMENT_DRAWER_ID = 2;
 
     public static Drawer getDrawer(final Activity activity, Toolbar toolbar) {
-        //if you want to update the items at a later time it is recommended to keep it in a variable
+
+        ImageHolder backgroundHeaderHolder = new ImageHolder(R.drawable.abstract_black_yellow_lines);
+
+        // Create the AccountHeader
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(activity)
+                .withSelectionListEnabledForSingleProfile(false)
+                .withHeaderBackground(backgroundHeaderHolder)
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
         PrimaryDrawerItem drawerEmptyItem = new PrimaryDrawerItem().withIdentifier(0).withName("");
         drawerEmptyItem.withEnabled(false);
 
@@ -40,6 +59,7 @@ public class DrawerCreator {
         //create the drawer and remember the `Drawer` result object
         Drawer result = new DrawerBuilder()
                 .withActivity(activity)
+                .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
                 .withDisplayBelowStatusBar(true)
                 .withTranslucentStatusBar(false)
@@ -47,7 +67,6 @@ public class DrawerCreator {
                 .withActionBarDrawerToggleAnimated(true)
                 .withSelectedItem(-1)
                 .addDrawerItems(
-                        drawerEmptyItem,drawerEmptyItem,drawerEmptyItem,
                         drawerItemHome,
                         drawerItemManageKeywords,
                         new DividerDrawerItem(),

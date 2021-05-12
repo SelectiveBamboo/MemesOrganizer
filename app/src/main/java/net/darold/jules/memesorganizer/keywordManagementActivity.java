@@ -36,6 +36,8 @@ public class keywordManagementActivity extends AppCompatActivity {
     private List<Keyword> keywordsToAdd = new ArrayList<Keyword>();
     private List<Keyword> keywordsToDelete = new ArrayList<Keyword>();
 
+    private Drawer result;
+
     private boolean hasAlreadyClicked = false;
 
     @Override
@@ -92,7 +94,12 @@ public class keywordManagementActivity extends AppCompatActivity {
             }
         });
 
-        Drawer result = DrawerCreator.getDrawer(this, toolbar);
+        result = DrawerCreator.getDrawer(this, toolbar);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         result.setSelection(DrawerCreator.KEYWORDS_MANAGEMENT_DRAWER_ID);
 
     }

@@ -42,8 +42,6 @@ import java.util.ArrayList;
 import me.gujun.android.taggroup.TagGroup;
 
 /**
- * Author CodeBoy722
- *
  * The main Activity start and loads all folders containing images in a RecyclerView
  * this folders are gotten from the MediaStore by the Method getPicturePaths()
  */
@@ -65,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     private ImageRepository imgRepo;
 
     String[] allKeywords;
+
+    Drawer result;
 
 
 
@@ -137,7 +137,12 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
         changeStatusBarColor();
 
-        Drawer result = DrawerCreator.getDrawer(this, toolbar);
+        result = DrawerCreator.getDrawer(this, toolbar);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         result.setSelection(DrawerCreator.MAIN_ACTIVITY_DRAWER_ID);
     }
 

@@ -14,7 +14,7 @@
     <string name="launch_search">Search kiddo !</string>
     <string name="search_suggestions">"Keywords suggestions :"</string>
     <string name="search_selection">"Keywords Selection :"</string>
-    <string name="no_search_selection">No keywords currently selected</string>
+    <string name="no_search_selection">No keywords currently selected  </string>
 
     <string name="share_picture">share picture</string>
     <string name="sharedPrefs">prefs</string>

@@ -36,7 +36,6 @@ import java.util.List;
 import me.gujun.android.taggroup.TagGroup;
 
 /**
- * Author CodeBoy722
  *
  * This Activity get a path to a folder that contains images from the MainActivity Intent and displays
  * all the images in the folder inside a RecyclerView
