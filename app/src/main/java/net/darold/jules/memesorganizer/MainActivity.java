@@ -144,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     protected void onResume() {
         super.onResume();
         result.setSelection(DrawerCreator.MAIN_ACTIVITY_DRAWER_ID);
+
+        allKeywords = Keyword.getStrArrayFromKwrdsList(imgRepo.getAllKeywords());
     }
 
     private void setAdapterFolders() {
@@ -164,11 +166,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
         searchItem = menu.getItem(0);
 
-        allKeywords = Keyword.getStrArrayFromKwrdsList(imgRepo.getAllKeywords());
-
         taggroup_selection = findViewById(R.id.tag_group_selection);
         taggroup_suggestion = findViewById(R.id.tag_group_suggestion);
-
 
         taggroup_suggestion.setTags(allKeywords);
         taggroup_suggestion.setOnTagClickListener(new TagGroup.OnTagClickListener() {
@@ -419,11 +418,6 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         swipeRefreshLayout.setRefreshing(true);
         setAdapterFolders();
         swipeRefreshLayout.setRefreshing(false);
-    }
-
-    public void startKeywordsManagementActivity(MenuItem menuItem) {
-        Intent move = new Intent(MainActivity.this,keywordManagementActivity.class);
-        startActivity(move);
     }
 
 }

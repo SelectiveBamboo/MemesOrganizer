@@ -33,11 +33,4 @@
         app:showAsAction="ifRoom"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:icon="@drawable/ic_search" />
-
-    <item android:id="@+id/startKeywordsManagementActivity"
-        android:title="@string/startKeywordsManagementActivity"
-        app:showAsAction="never"
-        android:onClick="startKeywordsManagementActivity"/>
-
-
 </menu>

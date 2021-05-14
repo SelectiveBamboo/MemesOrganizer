@@ -1,5 +1,6 @@
 package net.darold.jules.memesorganizer;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -108,7 +109,12 @@ public class keywordManagementActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!keywordsToAdd.isEmpty() || !keywordsToDelete.isEmpty() && !hasAlreadyClicked)
         {
-            Toast.makeText(keywordManagementActivity.this, "Changes have been made but not validated... \n Changes must be validated to take effect, try again to leave anyway", Toast.LENGTH_LONG).show();
+            //Toast.makeText(keywordManagementActivity.this, "Changes have been made but not validated... \n Changes must be validated to take effect, try again to leave anyway", Toast.LENGTH_LONG).show();
+            AlertDialog.Builder adb = new AlertDialog.Builder(keywordManagementActivity.this);
+            adb.setTitle("Are you sure ?");
+            adb.setMessage("Changes have been made but not validated... \nChanges must be validated to take effect. \n\nPress back again to leave anyway.");
+            adb.setPositiveButton("OK", null);
+            adb.show();
             hasAlreadyClicked = true;
         }
         else
