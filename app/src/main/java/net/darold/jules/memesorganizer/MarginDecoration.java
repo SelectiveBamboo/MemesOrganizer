@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Author CodeBoy722
  *
  * RecyclerView's item margin decorator
  */

@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- *Author CodeBoy722
  *
  * picture_Adapter's ViewHolder
  */

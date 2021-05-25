@@ -16,7 +16,7 @@ public interface KeywordDAO {
     void insertKeywords(Keyword... keywords);
 
     @Delete
-    void deleteKeyword(Keyword keyword);
+    void deleteKeyword(Keyword... keyword);
 
     @Query("SELECT * FROM keywords_table ORDER BY keyword ASC")
     List<Keyword> getAllKeywords();

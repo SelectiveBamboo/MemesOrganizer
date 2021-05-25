@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(tableName = "keywords_table")
 public class Keyword {
@@ -19,6 +20,19 @@ public class Keyword {
     public Keyword(String keyword) { this.keyword = keyword; }
 
     public String getKeyword() { return keyword; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Keyword keyword1 = (Keyword) o;
+        return keyword.equals(keyword1.keyword);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(keyword);
+    }
 
     static List<String> getStrListFromKwrdsList(List<Keyword> kwrds)
     {

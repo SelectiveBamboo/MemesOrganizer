@@ -1,8 +1,7 @@
 package net.darold.jules.memesorganizer;
 
 /**
- * Author CodeBoy722
- *
+*
  * Custom class for holding data of images on the device external storage
  */
 public class pictureFacer {

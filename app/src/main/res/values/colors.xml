@@ -14,8 +14,16 @@
     <color name="lightOrange">#FFC107</color>
     <color name="black">#2b343e</color>
     <color name="skyblue">#4BB4E9</color>
-    <color name="transparent_lightGray">#3E6B6FB8</color>
+    <color name="transparent_lightGray">#3E7175C6</color>
     <color name="transparentGray">#AAAAAABB</color>
     <color name="red_material">#AD1457</color>
+
+
+    <!-- Material DEFAULT drawer colors -->
+    <color name="material_drawer_selected">#9AEFC40B</color>
+    <color name="material_drawer_selected_legacy">#E8E8E8</color>
+    <color name="material_drawer_selected_text">#E632322C</color>
+    <color name="material_drawer_header_selection_text">#DE000000</color>
+    <color name="material_drawer_header_selection_subtext">#8A000000</color>
 
 </resources>

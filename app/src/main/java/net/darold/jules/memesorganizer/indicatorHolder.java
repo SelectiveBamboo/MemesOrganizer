@@ -8,7 +8,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Author CodeBoy722
  *
  * recyclerViewPagerImageIndicator's ViewHolder
  */
