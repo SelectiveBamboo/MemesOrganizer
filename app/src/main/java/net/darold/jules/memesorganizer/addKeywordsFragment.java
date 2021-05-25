@@ -38,8 +38,6 @@ public class addKeywordsFragment extends Fragment {
     private String imageURI;
     private String pictureName;
 
-    private Toolbar toolbar;
-
     //First tagGroup, to display the keywords that WILL be associated to the image
     private TagGroup imageKeywords_TagGroup;
     //Second tagGroup, to display the keywords that COULD be associated to the image
@@ -125,11 +123,6 @@ public class addKeywordsFragment extends Fragment {
         imageKeywords_TagGroup.setOnTagChangeListener(new TagGroup.OnTagChangeListener() {
             @Override
             public void onAppend(TagGroup tagGroup, String tag) {
-                /**
-                 * Things to do when a new tag is created (append)
-                 * ---Remove from the other group if existing
-                 */
-
                 String[] newTagsList = StringArrayTools.removeStringFromStrArray(listKeywords_TagGroup.getTags(), tag);
                 listKeywords_TagGroup.setTags(newTagsList);
             }

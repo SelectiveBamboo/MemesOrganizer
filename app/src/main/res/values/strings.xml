@@ -14,7 +14,7 @@
     <string name="launch_search">Search kiddo !</string>
     <string name="search_suggestions">"Keywords suggestions :"</string>
     <string name="search_selection">"Keywords Selection :"</string>
-    <string name="no_search_selection">No keywords currently selected</string>
+    <string name="no_search_selection">No keywords currently selected  </string>
 
     <string name="share_picture">share picture</string>
     <string name="sharedPrefs">prefs</string>
@@ -23,4 +23,12 @@
     <string name="sortByNameDesc">Sort by name DESC</string>
     <string name="sortByDateAsc">Sort by date ASC</string>
     <string name="sortByDateDesc">Sort by date DESC</string>
+    <string name="confirm_addKeywords">confirm adding these keywords</string>
+    <string name="confirm_keywordManagement">confirm the keywords management</string>
+    <string name="startKeywordsManagementActivity">Manage Keywords</string>
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="help">Help</string>
+    <string name="donate">Donate</string>
 </resources>

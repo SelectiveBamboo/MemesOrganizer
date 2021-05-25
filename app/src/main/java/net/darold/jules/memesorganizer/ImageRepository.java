@@ -1,6 +1,7 @@
 package net.darold.jules.memesorganizer;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.room.Room;
 import androidx.room.migration.Migration;
@@ -84,10 +85,11 @@ public class ImageRepository {
         });
     }
 
-    void deleteKeyword(Keyword keyword){
+    void deleteKeyword(Keyword... keywords){
         ImageRoomDatabase.databaseWriteExecutor.execute(() -> {
-            mKeywordDAO.deleteKeyword(keyword);
+            mKeywordDAO.deleteKeyword(keywords);
         });
+        Log.e("88888888888888888888", "deleteKeyword: " + keywords.length);
     }
 
     void insertImages(Image... images){
